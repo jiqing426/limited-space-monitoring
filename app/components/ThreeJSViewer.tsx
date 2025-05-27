@@ -40,7 +40,7 @@ export default function ThreeJSViewer() {
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          minDistance={120}
+          minDistance={100}
           maxDistance={180}
           target={[-10, 0, 0]}
           autoRotate={false}

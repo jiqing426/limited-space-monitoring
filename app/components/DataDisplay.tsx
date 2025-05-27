@@ -1,6 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { 
+  Thermometer, 
+  Droplets, 
+  Wind, 
+  CloudSnow, 
+  Flame, 
+  Skull 
+} from 'lucide-react';
 
 interface AirQualityData {
   temperature: number;
@@ -10,6 +18,33 @@ interface AirQualityData {
   methane: number;
   h2s: number;
 }
+
+// 图标组件配置
+const IconWrapper = ({ 
+  children, 
+  bgColor, 
+  iconColor 
+}: { 
+  children: React.ReactNode; 
+  bgColor: string; 
+  iconColor: string; 
+}) => (
+  <div 
+    className="icon-wrapper"
+    style={{
+      width: '40px',
+      height: '40px',
+      borderRadius: '8px',
+      backgroundColor: bgColor,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      color: iconColor
+    }}
+  >
+    {children}
+  </div>
+);
 
 export default function DataDisplay() {
   const [data, setData] = useState<AirQualityData>({
@@ -44,36 +79,60 @@ export default function DataDisplay() {
     <table className="data-table">
       <tbody>
         <tr>
-          <th><img src="/img/icon-01.png" alt="温度" /></th>
+          <th>
+            <IconWrapper bgColor="#ff6b6b20" iconColor="#ff6b6b">
+              <Thermometer size={24} />
+            </IconWrapper>
+          </th>
           <td>
             <p><span>{data.temperature.toFixed(1)}</span></p>
             <p>温度（℃）</p>
           </td>
-          <th><img src="/img/icon-02.png" alt="湿度" /></th>
+          <th>
+            <IconWrapper bgColor="#4ecdc420" iconColor="#4ecdc4">
+              <Droplets size={24} />
+            </IconWrapper>
+          </th>
           <td>
             <p><span>{data.humidity.toFixed(1)}</span></p>
             <p>湿度（%）</p>
           </td>
         </tr>
         <tr>
-          <th><img src="/img/icon-03.png" alt="氧气" /></th>
+          <th>
+            <IconWrapper bgColor="#45b7d120" iconColor="#45b7d1">
+              <Wind size={24} />
+            </IconWrapper>
+          </th>
           <td>
             <p><span>{data.oxygen.toFixed(1)}</span></p>
             <p>氧气浓度（%）</p>
           </td>
-          <th><img src="/img/icon-04.png" alt="二氧化碳" /></th>
+          <th>
+            <IconWrapper bgColor="#96ceb420" iconColor="#96ceb4">
+              <CloudSnow size={24} />
+            </IconWrapper>
+          </th>
           <td>
             <p><span>{data.co2.toFixed(0)}</span></p>
             <p>二氧化碳（ppm）</p>
           </td>
         </tr>
         <tr>
-          <th><img src="/img/icon-05.png" alt="甲烷" /></th>
+          <th>
+            <IconWrapper bgColor="#feca5720" iconColor="#feca57">
+              <Flame size={24} />
+            </IconWrapper>
+          </th>
           <td>
             <p><span>{data.methane.toFixed(1)}</span></p>
             <p>甲烷（ppm）</p>
           </td>
-          <th><img src="/img/icon-06.png" alt="硫化氢" /></th>
+          <th>
+            <IconWrapper bgColor="#ff9ff320" iconColor="#ff9ff3">
+              <Skull size={24} />
+            </IconWrapper>
+          </th>
           <td>
             <p><span>{data.h2s.toFixed(2)}</span></p>
             <p>硫化氢（ppm）</p>

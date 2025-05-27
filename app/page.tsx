@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import ThreeJSViewer from './components/ThreeJSViewer';
 import DataDisplay from './components/DataDisplay';
-import { RankChart, TrendChart, LevelChart } from './components/Charts';
+import { TrendChart, LevelChart } from './components/Charts';
 
 export default function Home() {
   const [currentDate, setCurrentDate] = useState('');
@@ -40,28 +40,8 @@ export default function Home() {
         <div className="flex-container">
           {/* 第一行 */}
           <div className="flex-row">
-            {/* 左侧：空气质量指标排行 */}
-            <div className="flex-cell flex-cell-l">
-              <div className="chart-wrapper">
-                <h3 className="chart-title">空气质量指标排行</h3>
-                <div className="chart-div">
-                  <RankChart />
-                </div>
-              </div>
-            </div>
-
-            {/* 中间：实时监测数据 */}
-            <div className="flex-cell flex-cell-c" style={{paddingRight: 0}}>
-              <div className="chart-wrapper">
-                <h3 className="chart-title">实时监测数据</h3>
-                <div className="chart-div">
-                  <DataDisplay />
-                </div>
-              </div>
-            </div>
-
-            {/* 右侧：Three.js 3D模型展示（替代地图） */}
-            <div className="flex-cell flex-cell-r" style={{paddingLeft: 0}}>
+            {/* 左侧和中间：3D模型展示 */}
+            <div className="flex-cell flex-cell-lc">
               <div className="chart-wrapper">
                 <h3 className="chart-title">3D模型展示</h3>
                 <div className="chart-div">
@@ -69,14 +49,24 @@ export default function Home() {
                 </div>
               </div>
             </div>
+
+            {/* 右侧：实时监测数据 */}
+            <div className="flex-cell flex-cell-r">
+              <div className="chart-wrapper">
+                <h3 className="chart-title">实时监测数据</h3>
+                <div className="chart-div">
+                  <DataDisplay />
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* 第二行 */}
           <div className="flex-row">
-            {/* 左侧：空气质量趋势分析 */}
+            {/* 左侧：危险气体监测 */}
             <div className="flex-cell flex-cell-lc" style={{paddingBottom: 0}}>
               <div className="chart-wrapper">
-                <h3 className="chart-title">空气质量趋势分析</h3>
+                <h3 className="chart-title">危险气体监测（最近30分钟）</h3>
                 <div className="chart-div">
                   <TrendChart />
                 </div>
@@ -86,7 +76,7 @@ export default function Home() {
             {/* 右侧：空气质量等级分布 */}
             <div className="flex-cell flex-cell-r" style={{paddingBottom: 0}}>
               <div className="chart-wrapper">
-                <h3 className="chart-title">空气质量等级分布</h3>
+                <h3 className="chart-title">空气质量等级分布（近12小时）</h3>
                 <div className="chart-div">
                   <LevelChart />
                 </div>

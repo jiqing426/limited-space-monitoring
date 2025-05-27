@@ -159,12 +159,11 @@ body {
 .data-table th {
   width: 60px;
   text-align: center;
-  background: url("/img/icon-bg.png") center / 100% no-repeat;
+  padding: 8px;
 }
 
-.data-table th img {
-  width: 30px;
-  height: 30px;
+.data-table th .icon-wrapper {
+  margin: 0 auto;
 }
 
 .data-table td {
