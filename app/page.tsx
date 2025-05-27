@@ -1,103 +1,100 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import ThreeJSViewer from './components/ThreeJSViewer';
+import DataDisplay from './components/DataDisplay';
+import { RankChart, TrendChart, LevelChart } from './components/Charts';
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [currentDate, setCurrentDate] = useState('');
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    const updateDate = () => {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth() + 1;
+      const day = now.getDate();
+      setCurrentDate(`${year}年${month}月${day}日`);
+    };
+
+    updateDate();
+    const interval = setInterval(updateDate, 60000); // 每分钟更新一次
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="dashboard-container">
+      {/* 头部 */}
+      <header className="dashboard-header">
+        <h3 className="header-title">有限空间空气质量监测</h3>
+        <div className="header-info header-info-l">数据来源：环境监测传感器</div>
+        <div className="header-info header-info-r">监测时间：<span>{currentDate}</span></div>
+      </header>
+
+      {/* 底部 */}
+      <footer className="dashboard-footer"></footer>
+
+      {/* 主要内容区域 */}
+      <div className="dashboard-content">
+        <div className="flex-container">
+          {/* 第一行 */}
+          <div className="flex-row">
+            {/* 左侧：空气质量指标排行 */}
+            <div className="flex-cell flex-cell-l">
+              <div className="chart-wrapper">
+                <h3 className="chart-title">空气质量指标排行</h3>
+                <div className="chart-div">
+                  <RankChart />
+                </div>
+              </div>
+            </div>
+
+            {/* 中间：实时监测数据 */}
+            <div className="flex-cell flex-cell-c" style={{paddingRight: 0}}>
+              <div className="chart-wrapper">
+                <h3 className="chart-title">实时监测数据</h3>
+                <div className="chart-div">
+                  <DataDisplay />
+                </div>
+              </div>
+            </div>
+
+            {/* 右侧：Three.js 3D模型展示（替代地图） */}
+            <div className="flex-cell flex-cell-r" style={{paddingLeft: 0}}>
+              <div className="chart-wrapper">
+                <h3 className="chart-title">3D模型展示</h3>
+                <div className="chart-div">
+                  <ThreeJSViewer />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 第二行 */}
+          <div className="flex-row">
+            {/* 左侧：空气质量趋势分析 */}
+            <div className="flex-cell flex-cell-lc" style={{paddingBottom: 0}}>
+              <div className="chart-wrapper">
+                <h3 className="chart-title">空气质量趋势分析</h3>
+                <div className="chart-div">
+                  <TrendChart />
+                </div>
+              </div>
+            </div>
+
+            {/* 右侧：空气质量等级分布 */}
+            <div className="flex-cell flex-cell-r" style={{paddingBottom: 0}}>
+              <div className="chart-wrapper">
+                <h3 className="chart-title">空气质量等级分布</h3>
+                <div className="chart-div">
+                  <LevelChart />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
 }
