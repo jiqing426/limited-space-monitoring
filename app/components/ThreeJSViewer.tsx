@@ -5,7 +5,7 @@ import { OrbitControls, useGLTF, Environment, Center } from '@react-three/drei';
 import { Suspense } from 'react';
 
 function Model() {
-  const { scene } = useGLTF('https://oss.turinhub.com/mx1.glb');
+  const { scene } = useGLTF('/mx1.glb');
   return <primitive object={scene} />;
 }
 
