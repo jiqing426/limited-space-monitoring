@@ -228,10 +228,10 @@ export function TrendChart() {
 export function LevelChart() {
   const chartRef = useRef<HTMLDivElement>(null);
   const [levelData, setLevelData] = useState([
-    {name: "优秀", value: 0, color: "#52c41a"},
-    {name: "良好", value: 0, color: "#1890ff"},
-    {name: "轻微危险", value: 0, color: "#faad14"},
-    {name: "非常危险", value: 0, color: "#f5222d"}
+    {name: "优秀", value: 0, color: "#4ecdc4"},
+    {name: "良好", value: 0, color: "#45b7d1"},
+    {name: "轻微危险", value: 0, color: "#feca57"},
+    {name: "非常危险", value: 0, color: "#ff6b6b"}
   ]);
 
   // 生成近12小时的空气质量等级数据
@@ -246,10 +246,10 @@ export function LevelChart() {
     const veryDanger = totalPoints - excellent - good - slightDanger; // 剩余的1%
 
     return [
-      {name: "优秀", value: excellent, color: "#52c41a"},
-      {name: "良好", value: good, color: "#1890ff"},
-      {name: "轻微危险", value: slightDanger, color: "#faad14"},
-      {name: "非常危险", value: veryDanger, color: "#f5222d"}
+      {name: "优秀", value: excellent, color: "#4ecdc4"},
+      {name: "良好", value: good, color: "#45b7d1"},
+      {name: "轻微危险", value: slightDanger, color: "#feca57"},
+      {name: "非常危险", value: veryDanger, color: "#ff6b6b"}
     ];
   };
 
