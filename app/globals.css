@@ -239,3 +239,790 @@ body {
     bottom: 12px;
   }
 }
+
+/* 工厂大屏样式 */
+.factory-dashboard {
+  background: linear-gradient(135deg, #0c1426 0%, #1a2332 50%, #0c1426 100%);
+}
+
+.factory-layout {
+  display: flex;
+  height: 100%;
+  gap: 15px;
+  padding: 15px;
+}
+
+.factory-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.left-column,
+.right-column {
+  flex: 0 0 320px;
+}
+
+.center-column {
+  flex: 1;
+}
+
+.factory-panel {
+  background: rgba(15, 25, 45, 0.8);
+  border: 1px solid rgba(64, 158, 255, 0.3);
+  border-radius: 8px;
+  padding: 15px;
+  backdrop-filter: blur(10px);
+}
+
+.factory-3d-container {
+  height: 100%;
+  background: rgba(15, 25, 45, 0.8);
+  border: 1px solid rgba(64, 158, 255, 0.3);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.factory-3d-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 60px;
+}
+
+.factory-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.factory-control-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(64, 158, 255, 0.3);
+  border-radius: 6px;
+  color: #b0c2f9;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.factory-control-btn:hover,
+.factory-control-btn.active {
+  background: rgba(64, 158, 255, 0.2);
+  border-color: #4ecdc4;
+  color: #4ecdc4;
+}
+
+.control-icon {
+  font-size: 16px;
+}
+
+/* 头部时间显示 */
+.time-display {
+  font-size: 24px;
+  font-weight: bold;
+  color: #4ecdc4;
+  margin-right: 10px;
+}
+
+.date-display {
+  font-size: 14px;
+  color: #b0c2f9;
+}
+
+.weather-info {
+  font-size: 18px;
+  color: #feca57;
+  margin-right: 10px;
+}
+
+.location-info {
+  font-size: 14px;
+  color: #b0c2f9;
+}
+
+/* 工厂统计组件样式 */
+.factory-stats-container {
+  height: 100%;
+}
+
+.stats-content {
+  margin-top: 15px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.main-stat {
+  padding: 15px;
+  background: rgba(64, 158, 255, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(64, 158, 255, 0.3);
+}
+
+.stat-icon {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(78, 205, 196, 0.2);
+  border-radius: 8px;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #b0c2f9;
+  margin-bottom: 2px;
+}
+
+.stat-label-en {
+  font-size: 10px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 36px;
+  font-weight: bold;
+  color: #4ecdc4;
+}
+
+.stat-row {
+  display: flex;
+  gap: 10px;
+}
+
+.small-stat {
+  flex: 1;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(64, 158, 255, 0.2);
+}
+
+.stat-icon-small {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-info-small {
+  flex: 1;
+  text-align: center;
+}
+
+.stat-label-small {
+  font-size: 12px;
+  color: #b0c2f9;
+  margin-bottom: 5px;
+}
+
+.stat-value-small {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* 巡检统计样式 */
+.inspection-stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.inspection-item {
+  text-align: center;
+}
+
+.inspection-label {
+  font-size: 14px;
+  color: #b0c2f9;
+  margin-bottom: 10px;
+}
+
+.inspection-value {
+  font-size: 32px;
+  font-weight: bold;
+  color: #4ecdc4;
+  margin-bottom: 10px;
+}
+
+.progress-circle {
+  position: relative;
+}
+
+/* 设备统计样式 */
+.device-stats {
+  margin-top: 15px;
+}
+
+.device-summary {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.device-summary-item {
+  flex: 1;
+  text-align: center;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.device-summary-item.danger {
+  background: rgba(255, 107, 107, 0.2);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.device-summary-item.normal {
+  background: rgba(78, 205, 196, 0.2);
+  border: 1px solid rgba(78, 205, 196, 0.3);
+}
+
+.device-count {
+  font-size: 28px;
+  font-weight: bold;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.device-label {
+  font-size: 12px;
+  color: #b0c2f9;
+}
+
+.device-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.device-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(64, 158, 255, 0.1);
+}
+
+.device-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.device-status {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.device-status.normal {
+  background: #4ecdc4;
+}
+
+.device-status.fault {
+  background: #ff6b6b;
+}
+
+.device-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.device-name {
+  font-size: 12px;
+  color: #b0c2f9;
+}
+
+.device-count-text {
+  font-size: 10px;
+  color: #666;
+}
+
+.device-total {
+  font-size: 14px;
+  color: #4ecdc4;
+  font-weight: bold;
+}
+
+/* 监控矩阵样式 */
+.monitor-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.monitor-item {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(64, 158, 255, 0.3);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(64, 158, 255, 0.1);
+}
+
+.monitor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.monitor-title {
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.monitor-location {
+  font-size: 10px;
+  color: #b0c2f9;
+}
+
+.monitor-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.monitor-status.online .status-dot {
+  background: #4ecdc4;
+}
+
+.monitor-status.offline .status-dot {
+  background: #ff6b6b;
+}
+
+.monitor-screen {
+  position: relative;
+  height: 80px;
+  background: #000;
+}
+
+.monitor-video {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  color: #4ecdc4;
+  font-size: 10px;
+}
+
+.monitor-offline {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ff6b6b;
+  font-size: 12px;
+}
+
+.monitor-controls {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: flex;
+  gap: 5px;
+}
+
+.control-btn {
+  width: 20px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border: none;
+  border-radius: 3px;
+  color: #b0c2f9;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-btn:hover {
+  background: rgba(64, 158, 255, 0.3);
+  color: #4ecdc4;
+}
+
+/* 空气质量监测大屏样式 */
+.air-quality-dashboard {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+}
+
+.air-quality-layout {
+  display: flex;
+  height: 100%;
+  gap: 15px;
+  padding: 15px;
+}
+
+.air-quality-column {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.air-quality-column.left-column,
+.air-quality-column.right-column {
+  flex: 0 0 300px;
+}
+
+.air-quality-column.center-column {
+  flex: 1;
+}
+
+.air-quality-panel {
+  background: rgba(20, 30, 50, 0.9);
+  border: 1px solid rgba(78, 205, 196, 0.3);
+  border-radius: 8px;
+  padding: 15px;
+  backdrop-filter: blur(10px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.air-quality-panel .chart-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.air-quality-panel .chart-div {
+  flex: 1;
+  min-height: 200px;
+}
+
+.air-quality-3d-container {
+  height: 60%;
+  background: rgba(20, 30, 50, 0.9);
+  border: 1px solid rgba(78, 205, 196, 0.3);
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.air-quality-3d-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 50px;
+}
+
+.air-quality-status {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #b0c2f9;
+}
+
+.status-item .status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-item.safe .status-dot {
+  background: #4ecdc4;
+}
+
+.status-item.warning .status-dot {
+  background: #feca57;
+}
+
+.status-item.danger .status-dot {
+  background: #ff6b6b;
+}
+
+/* 空气质量统计样式 */
+.air-quality-stats-container {
+  height: 100%;
+}
+
+/* 预警列表样式 */
+.alerts-content {
+  margin-top: 15px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.alert-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(78, 205, 196, 0.1);
+}
+
+.alert-icon {
+  margin-top: 2px;
+}
+
+.alert-info {
+  flex: 1;
+}
+
+.alert-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.alert-type {
+  font-size: 12px;
+  color: #fff;
+  font-weight: bold;
+}
+
+.alert-time {
+  font-size: 10px;
+  color: #666;
+}
+
+.alert-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.alert-value {
+  font-size: 14px;
+  color: #4ecdc4;
+  font-weight: bold;
+}
+
+.alert-location {
+  font-size: 10px;
+  color: #b0c2f9;
+}
+
+/* 环境监测网格样式 */
+.env-monitor-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.env-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  border: 1px solid rgba(78, 205, 196, 0.2);
+}
+
+.env-icon {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 6px;
+}
+
+.env-info {
+  flex: 1;
+}
+
+.env-label {
+  font-size: 11px;
+  color: #b0c2f9;
+  margin-bottom: 3px;
+}
+
+.env-value {
+  font-size: 16px;
+  color: #fff;
+  font-weight: bold;
+}
+
+/* 监测点矩阵样式 */
+.monitoring-matrix {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 15px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.monitoring-point {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(78, 205, 196, 0.3);
+  border-radius: 6px;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.monitoring-point:hover {
+  border-color: #4ecdc4;
+  background: rgba(78, 205, 196, 0.1);
+}
+
+.point-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.point-info {
+  flex: 1;
+}
+
+.point-id {
+  font-size: 14px;
+  color: #4ecdc4;
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+
+.point-name {
+  font-size: 11px;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.point-location {
+  font-size: 9px;
+  color: #b0c2f9;
+}
+
+.point-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+}
+
+.point-data {
+  margin-bottom: 8px;
+}
+
+.data-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.data-label {
+  font-size: 10px;
+  color: #b0c2f9;
+}
+
+.data-value {
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.offline-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #666;
+  font-size: 10px;
+  padding: 10px 0;
+}
+
+.point-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid rgba(78, 205, 196, 0.1);
+}
+
+.update-time {
+  font-size: 9px;
+  color: #666;
+}
+
+.signal-strength {
+  display: flex;
+  gap: 2px;
+  align-items: flex-end;
+}
+
+.signal-bar {
+  width: 3px;
+  background: #4ecdc4;
+  border-radius: 1px;
+}
+
+.signal-bar:nth-child(1) { height: 4px; }
+.signal-bar:nth-child(2) { height: 6px; }
+.signal-bar:nth-child(3) { height: 8px; }
+.signal-bar:nth-child(4) { height: 10px; }
