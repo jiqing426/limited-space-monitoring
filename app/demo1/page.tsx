@@ -9,6 +9,8 @@ import { MonitoringMatrix } from './components/MonitoringMatrix';
 export default function Demo1() {
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
+  const [showVideo, setShowVideo] = useState(true);
+  const [has3DLoaded, setHas3DLoaded] = useState(false);
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -37,7 +39,7 @@ export default function Demo1() {
     <div className="dashboard-container air-quality-dashboard">
       {/* 头部 */}
       <header className="dashboard-header">
-        <h3 className="header-title">有限空间空气质量监测系统</h3>
+        <h4 className="header-title">地下管廊有害气体监测系统</h4>
         <div className="header-info header-info-l">
           <span className="time-display">{currentTime}</span>
           <span className="date-display">{currentDate}</span>
@@ -76,24 +78,55 @@ export default function Demo1() {
           <div className="air-quality-column center-column">
             {/* 3D模型展示 */}
             <div className="air-quality-3d-container">
-              <div className="air-quality-3d-content">
-                <ThreeJSViewer />
+              {/* 切换按钮 */}
+              <div className="view-toggle-controls">
+                <button 
+                  className={`toggle-btn ${showVideo ? 'active' : ''}`}
+                  onClick={() => setShowVideo(true)}
+                >
+                  介绍视频
+                </button>
+                                  <button 
+                    className={`toggle-btn ${!showVideo ? 'active' : ''}`}
+                    onClick={() => {
+                      setShowVideo(false);
+                      setHas3DLoaded(true);
+                    }}
+                  >
+                    3D模型
+                  </button>
               </div>
-              
-              {/* 底部状态指示 */}
-              <div className="air-quality-status">
-                <div className="status-item safe">
-                  <div className="status-dot"></div>
-                  <span>安全区域</span>
-                </div>
-                <div className="status-item warning">
-                  <div className="status-dot"></div>
-                  <span>警告区域</span>
-                </div>
-                <div className="status-item danger">
-                  <div className="status-dot"></div>
-                  <span>危险区域</span>
-                </div>
+
+              <div className="air-quality-3d-content">
+                {showVideo ? (
+                  <div className="video-container">
+                    <video
+                      controls
+                      autoPlay
+                      muted
+                      loop
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                    >
+                      <source src="/intro.mp4" type="video/mp4" />
+                      您的浏览器不支持视频播放。
+                    </video>
+                  </div>
+                ) : (
+                  <div className="threejs-lazy-container">
+                    {has3DLoaded ? (
+                      <ThreeJSViewer />
+                    ) : (
+                      <div className="loading-placeholder">
+                        <div className="loading-spinner"></div>
+                        <p>正在加载3D模型...</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
             
