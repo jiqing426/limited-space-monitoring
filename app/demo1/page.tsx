@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import ThreeJSViewer from '../demo2/components/ThreeJSViewer';
-import { AirQualityStats, SafetyAlerts, EnvironmentMonitor } from './components/AirQualityComponents';
+import { AirQualityStats, EnvironmentMonitor } from './components/AirQualityComponents';
 import { RealTimeChart, HistoryChart } from './components/AirQualityCharts';
 import { MonitoringMatrix } from './components/MonitoringMatrix';
 
@@ -61,11 +61,6 @@ export default function Demo1() {
             {/* 空气质量统计 */}
             <div className="air-quality-panel">
               <AirQualityStats />
-            </div>
-            
-            {/* 安全预警 */}
-            <div className="air-quality-panel">
-              <SafetyAlerts />
             </div>
             
             {/* 环境监测 */}
@@ -130,12 +125,9 @@ export default function Demo1() {
               </div>
             </div>
             
-            {/* 实时数据图表 */}
+            {/* 监测点矩阵 */}
             <div className="air-quality-panel" style={{ height: '40%' }}>
-              <h3 className="chart-title">实时气体浓度监测</h3>
-              <div className="chart-div" style={{ flex: 1 }}>
-                <RealTimeChart />
-              </div>
+              <MonitoringMatrix />
             </div>
           </div>
 
@@ -149,9 +141,12 @@ export default function Demo1() {
               </div>
             </div>
             
-            {/* 监测点矩阵 */}
+            {/* 实时数据图表 */}
             <div className="air-quality-panel" style={{ height: '50%' }}>
-              <MonitoringMatrix />
+              <h3 className="chart-title">实时气体浓度监测</h3>
+              <div className="chart-div" style={{ flex: 1 }}>
+                <RealTimeChart />
+              </div>
             </div>
           </div>
         </div>

@@ -53,56 +53,7 @@ export function AirQualityStats() {
   );
 }
 
-// 安全预警组件
-export function SafetyAlerts() {
-  const [alerts, setAlerts] = useState([
-    { id: 1, type: '甲烷浓度', level: 'warning', value: '2.8 ppm', time: '14:32', location: 'A区-3号点' },
-    { id: 2, type: '氧气浓度', level: 'info', value: '19.2%', time: '14:28', location: 'B区-1号点' },
-    { id: 3, type: '硫化氢', level: 'normal', value: '0.03 ppm', time: '14:25', location: 'C区-2号点' }
-  ]);
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'warning': return '#feca57';
-      case 'danger': return '#ff6b6b';
-      case 'info': return '#45b7d1';
-      default: return '#4ecdc4';
-    }
-  };
-
-  const getLevelIcon = (level: string) => {
-    switch (level) {
-      case 'warning': return <AlertTriangle size={16} />;
-      case 'danger': return <AlertTriangle size={16} />;
-      default: return <CheckCircle size={16} />;
-    }
-  };
-
-  return (
-    <div className="air-quality-stats-container">
-      <h3 className="chart-title">安全预警</h3>
-      <div className="alerts-content">
-        {alerts.map((alert) => (
-          <div key={alert.id} className="alert-item">
-            <div className="alert-icon" style={{ color: getLevelColor(alert.level) }}>
-              {getLevelIcon(alert.level)}
-            </div>
-            <div className="alert-info">
-              <div className="alert-header">
-                <span className="alert-type">{alert.type}</span>
-                <span className="alert-time">{alert.time}</span>
-              </div>
-              <div className="alert-details">
-                <span className="alert-value">{alert.value}</span>
-                <span className="alert-location">{alert.location}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // 环境监测组件
 export function EnvironmentMonitor() {

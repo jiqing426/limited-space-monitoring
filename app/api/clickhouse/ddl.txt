@@ -1,0 +1,25 @@
+create table lsm_data
+(
+    id                    UUID     default generateUUIDv4() comment '主键ID',
+    device_id             UInt32 comment '设备编号',
+    node_id               UInt32 comment '节点ID',
+    node_name             Nullable(String) comment '节点名称',
+    relay_status          Nullable(String) comment '继电器状态',
+    tem                   Nullable(Float32) comment '温度值',
+    tem_name              Nullable(String) comment '温度值名称',
+    hum                   Nullable(Float32) comment '湿度值',
+    hum_name              Nullable(String) comment '湿度值名称',
+    record_time           Nullable(String) comment '记录时间',
+    coordinate_type       Nullable(UInt8) comment '坐标类型(0:百度经纬度,1:中国联通,2:中国移动,3:GPS经纬度)',
+    lng                   Nullable(Float64) comment '经度',
+    lat                   Nullable(Float64) comment '纬度',
+    float_value           Nullable(Float32) comment '浮点型数据',
+    signed_int32_value    Nullable(Int32) comment '有符号32位整数值',
+    un_signed_int32_value Nullable(UInt32) comment '无符号32位整数值',
+    remark                Nullable(String) comment '备注',
+    create_time           DateTime default now() comment '创建时间',
+    update_time           DateTime default now() comment '修改时间'
+)
+    engine = MergeTree ORDER BY (id, create_time)
+        SETTINGS index_granularity = 8192
+        comment '数据表';

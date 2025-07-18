@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clickhouse/client": "^1.11.2",
     "@react-three/drei": "^10.0.8",
     "@react-three/fiber": "^9.1.2",
     "@types/three": "^0.176.0",
