@@ -54,24 +54,25 @@ export async function GET(request: NextRequest) {
   try {
     console.log('📥 接收到监测点数据请求');
     
-    // 构建查询SQL - 基于实际的lsm_data表结构查询最新监测数据
+    // 构建查询SQL - 基于lsm_summary_data表结构查询最新监测数据
     const sql = `
       SELECT 
         device_id,
-        node_id,
-        node_name,
+        relay_status,
         tem as temperature,
         hum as humidity,
-        float_value as gas_concentration,
+        oxygen,
+        hyd as h2s,
+        dioxide as co2,
+        monoxide as co,
+        methane,
         record_time,
         create_time,
-        lng,
-        lat,
         remark
-      FROM lsm_data 
-      WHERE create_time >= now() - INTERVAL 1 HOUR
+      FROM lsm_summary_data 
+      WHERE create_time >= now() - INTERVAL 3 HOUR
       ORDER BY device_id, create_time DESC
-      LIMIT 100
+      LIMIT 50
     `;
 
     const result = await queryClickHouse(sql);

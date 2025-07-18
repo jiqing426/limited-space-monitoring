@@ -6,11 +6,68 @@ import { AlertTriangle, CheckCircle, Thermometer, Droplets, Wind, Flame, Skull, 
 // 空气质量统计组件
 export function AirQualityStats() {
   const [stats, setStats] = useState({
-    totalSensors: 24,
-    onlineSensors: 24,
-    alertCount: 2,
-    safetyLevel: '良好'
+    totalSensors: 0,
+    onlineSensors: 0,
+    alertCount: 0,
+    safetyLevel: '未知'
   });
+
+  // 获取监测点数据
+  const fetchMonitoringData = async () => {
+    try {
+      const response = await fetch('/api/clickhouse/monitoring-points');
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        // 统计设备数量
+        const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
+        const totalDevices = deviceIds.length;
+        
+        // 统计在线设备数（有任意数据的设备视为在线）
+        const onlineDevices = deviceIds.filter(deviceId => {
+          const deviceData = result.data.find((item: any) => item.device_id === deviceId);
+          return deviceData && (
+            deviceData.temperature || 
+            deviceData.humidity || 
+            deviceData.oxygen || 
+            deviceData.h2s || 
+            deviceData.co2 || 
+            deviceData.co || 
+            deviceData.methane
+          );
+        }).length;
+        
+        // 统计告警数量（任意气体超标）
+        const alerts = result.data.filter((item: any) => (
+          (item.methane > 2.5) || 
+          (item.h2s > 0.05) || 
+          (item.oxygen < 20.0) || 
+          (item.co2 > 1000) || 
+          (item.co > 50)
+        )).length;
+        
+        // 更新状态
+        setStats({
+          totalSensors: totalDevices,
+          onlineSensors: onlineDevices,
+          alertCount: alerts,
+          safetyLevel: alerts > 0 ? '异常' : '良好'
+        });
+      }
+    } catch (error) {
+      console.error('获取监测点数据失败:', error);
+    }
+  };
+
+  useEffect(() => {
+    // 立即执行一次
+    fetchMonitoringData();
+    
+    // 每10秒更新一次
+    const interval = setInterval(fetchMonitoringData, 10000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="air-quality-stats-container">

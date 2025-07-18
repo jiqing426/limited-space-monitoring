@@ -8,21 +8,18 @@ interface MonitoringPoint {
   name: string;
   location: string;
   status: 'normal' | 'warning' | 'danger' | 'offline';
-  methane: number;
-  h2s: number;
+  temperature: number;
+  humidity: number;
   oxygen: number;
+  h2s: number;
+  co2: number;
+  co: number;
+  methane: number;
   lastUpdate: string;
 }
 
 export function MonitoringMatrix() {
-  const [monitoringPoints, setMonitoringPoints] = useState<MonitoringPoint[]>([
-    { id: 'A01', name: 'A区-1号点', location: '入口通道', status: 'normal', methane: 1.8, h2s: 0.02, oxygen: 20.9, lastUpdate: '14:35' },
-    { id: 'A02', name: 'A区-2号点', location: '主作业区', status: 'normal', methane: 2.1, h2s: 0.03, oxygen: 20.8, lastUpdate: '14:35' },
-    { id: 'A03', name: 'A区-3号点', location: '深度作业区', status: 'warning', methane: 2.8, h2s: 0.05, oxygen: 20.2, lastUpdate: '14:34' },
-    { id: 'B01', name: 'B区-1号点', location: '通风口', status: 'normal', methane: 1.5, h2s: 0.01, oxygen: 20.9, lastUpdate: '14:35' },
-    { id: 'B02', name: 'B区-2号点', location: '储存区域', status: 'normal', methane: 1.9, h2s: 0.02, oxygen: 20.7, lastUpdate: '14:35' },
-    { id: 'C01', name: 'C区-1号点', location: '排水区域', status: 'offline', methane: 0, h2s: 0, oxygen: 0, lastUpdate: '14:20' }
-  ]);
+  const [monitoringPoints, setMonitoringPoints] = useState<MonitoringPoint[]>([]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -89,37 +86,86 @@ export function MonitoringMatrix() {
         
         // 打印完整的数据
         console.log('📊 完整数据列表:');
-        console.table(result.data);
+        console.log(result.data);
         
         // 分析并打印数据统计
         const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
-        const nodeTypes = [...new Set(result.data.map((item: any) => item.node_name).filter((name: any) => name))];
         
         console.log('📈 数据统计分析:');
         console.log(`- 设备总数: ${deviceIds.length}`);
         console.log(`- 设备ID列表: ${deviceIds.join(', ')}`);
-        console.log(`- 节点类型: ${nodeTypes.join(', ')}`);
+        console.log(`- 数据记录总数: ${result.data.length}`);
+        console.log(`- 数据: ${deviceIds}`)
         
-        // 按节点类型分组显示最新数据
-        const latestByNodeType: { [key: string]: any } = {};
+        console.log('🔄 各设备最新数据:');
+        
+        // 根据API返回的数据更新UI
+        const apiDataMap: { [key: string]: any } = {};
         result.data.forEach((item: any) => {
-          if (item.node_name && (!latestByNodeType[item.node_name] || 
-              new Date(item.create_time) > new Date(latestByNodeType[item.node_name].create_time))) {
-            latestByNodeType[item.node_name] = item;
+          const deviceKey = `D${item.device_id}`;
+          if (!apiDataMap[deviceKey] || 
+              new Date(item.create_time) > new Date(apiDataMap[deviceKey].create_time)) {
+            apiDataMap[deviceKey] = item;
           }
         });
-        
-        console.log('🔄 各节点类型最新数据:');
-        Object.entries(latestByNodeType).forEach(([nodeType, data]: [string, any]) => {
-          console.log(`${nodeType}:`, {
+
+        // 打印每个设备的最新数据
+        Object.entries(apiDataMap).forEach(([deviceKey, data]: [string, any]) => {
+          console.log(`设备${data.device_id}:`, {
             设备ID: data.device_id,
             温度: data.temperature,
             湿度: data.humidity,
-            气体浓度: data.gas_concentration,
+            氧气: data.oxygen,
+            甲烷: data.methane,
+            硫化氢: data.h2s,
+            二氧化碳: data.co2,
+            一氧化碳: data.co,
+            继电器状态: data.relay_status,
             记录时间: data.record_time,
             创建时间: data.create_time
           });
         });
+
+        // 更新监测点数据以反映真实的API数据
+        const updatedPoints = Object.values(apiDataMap).map((data: any, index: number) => {
+          const zones = ['A', 'B', 'C'];
+          const zoneIndex = Math.floor(index / 2);
+          const pointIndex = (index % 2) + 1;
+          const pointId = `${zones[zoneIndex]}${pointIndex.toString().padStart(2, '0')}`;
+          
+          // 根据气体浓度判断状态
+          let status: 'normal' | 'warning' | 'danger' | 'offline' = 'normal';
+          if (!data.oxygen && !data.methane && !data.h2s) {
+            status = 'offline';
+          } else if (data.methane > 2.5 || data.h2s > 0.05 || data.oxygen < 20.0) {
+            status = 'warning';
+          } else if (data.methane > 3.0 || data.h2s > 0.1 || data.oxygen < 19.0) {
+            status = 'danger';
+          }
+
+          return {
+            id: pointId,
+            name: `${zones[zoneIndex]}区-${pointIndex}号点`,
+            location: `设备${data.device_id}`,
+            status,
+            temperature: data.temperature || 0,
+            humidity: data.humidity || 0,
+            oxygen: data.oxygen || 0,
+            h2s: data.h2s || 0,
+            co2: data.co2 || 0,
+            co: data.co || 0,
+            methane: data.methane || 0,
+            lastUpdate: new Date().toLocaleTimeString('zh-CN', { 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+              })
+          };
+        });
+
+        // 直接使用API数据更新状态，无论数据多少
+        setMonitoringPoints(updatedPoints);
+        console.log(`✅ 已更新监测点矩阵数据，使用真实API数据，共${updatedPoints.length}个监测点`);
         
       } else {
         console.error('❌ ClickHouse 数据请求失败:', result.message || result.error || 'Unknown error');
@@ -138,25 +184,9 @@ export function MonitoringMatrix() {
     
     // 设置定时器，每10秒请求一次ClickHouse数据
     const clickhouseInterval = setInterval(fetchClickHouseData, 10000);
-    
-    // 保留原有的模拟数据更新（用于UI展示）
-    const simulationInterval = setInterval(() => {
-      setMonitoringPoints(prev => prev.map(point => {
-        if (point.status === 'offline') return point;
-        
-        return {
-          ...point,
-          methane: Math.max(1.0, Math.min(3.5, point.methane + (Math.random() - 0.5) * 0.2)),
-          h2s: Math.max(0.01, Math.min(0.1, point.h2s + (Math.random() - 0.5) * 0.01)),
-          oxygen: Math.max(19.0, Math.min(21.0, point.oxygen + (Math.random() - 0.5) * 0.1)),
-          lastUpdate: new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })
-        };
-      }));
-    }, 5000);
 
     return () => {
       clearInterval(clickhouseInterval);
-      clearInterval(simulationInterval);
     };
   }, []);
 
@@ -191,20 +221,37 @@ export function MonitoringMatrix() {
         <div className="monitoring-matrix" style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '8px',
-          padding: '10px 5px'
+          gap: '6px',
+          padding: '6px 3px',
+          minHeight: '200px'
         }}>
-          {monitoringPoints.map((point) => (
+          {monitoringPoints.length === 0 ? (
+            <div style={{
+              gridColumn: '1 / -1',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '40px 20px',
+              color: '#666',
+              fontSize: '14px'
+            }}>
+              <div style={{ marginBottom: '10px', fontSize: '24px' }}>📊</div>
+              <div>暂无监测点数据</div>
+              <div style={{ fontSize: '12px', marginTop: '5px' }}>等待ClickHouse数据...</div>
+            </div>
+          ) : (
+            monitoringPoints.map((point) => (
             <div key={point.id} className="monitoring-point" style={{
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
               border: '1px solid rgba(78, 205, 196, 0.3)',
               borderRadius: '8px',
-              padding: '8px',
+              padding: '6px',
               fontSize: '11px',
-              minHeight: '120px',
+              minHeight: '100px',
               display: 'flex',
               flexDirection: 'column',
-              justifyContent: 'space-between'
+              justifyContent: 'flex-start'
             }}>
               <div className="point-header" style={{
                 display: 'flex',
@@ -243,14 +290,150 @@ export function MonitoringMatrix() {
               </div>
               
               <div className="point-data" style={{
-                flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '3px'
+                gap: '2px'
               }}>
                 {point.status !== 'offline' ? (
                   <>
+                  {/* 温度和湿度 */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '8px'
+                  }}>
                     <div className="data-item" style={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span className="data-label" style={{
+                        fontSize: '9px',
+                        color: '#ccc'
+                      }}>温度</span>
+                      <span className="data-value" style={{ 
+                        color: '#4ecdc4',
+                        fontSize: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        {point.temperature.toFixed(1)}°C
+                      </span>
+                    </div>
+                    <div className="data-item" style={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span className="data-label" style={{
+                        fontSize: '9px',
+                        color: '#ccc'
+                      }}>湿度</span>
+                      <span className="data-value" style={{ 
+                        color: '#4ecdc4',
+                        fontSize: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        {point.humidity.toFixed(1)}%
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 气体数据 */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '8px'
+                  }}>
+                    <div className="data-item" style={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span className="data-label" style={{
+                        fontSize: '9px',
+                        color: '#ccc'
+                      }}>氧气</span>
+                      <span className="data-value" style={{ 
+                        color: point.oxygen < 20.5 ? '#ff6b6b' : '#4ecdc4',
+                        fontSize: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        {point.oxygen.toFixed(1)}%
+                      </span>
+                    </div>
+                    <div className="data-item" style={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span className="data-label" style={{
+                        fontSize: '9px',
+                        color: '#ccc'
+                      }}>硫化氢</span>
+                      <span className="data-value" style={{ 
+                        color: point.h2s > 0.05 ? '#ff9ff3' : '#4ecdc4',
+                        fontSize: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        {point.h2s.toFixed(2)} ppm
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '8px'
+                  }}>
+                    <div className="data-item" style={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span className="data-label" style={{
+                        fontSize: '9px',
+                        color: '#ccc'
+                      }}>二氧化碳</span>
+                      <span className="data-value" style={{ 
+                        color: point.co2 > 1000 ? '#feca57' : '#4ecdc4',
+                        fontSize: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        {point.co2.toFixed(1)} ppm
+                      </span>
+                    </div>
+                    <div className="data-item" style={{
+                      flex: 1,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center'
+                    }}>
+                      <span className="data-label" style={{
+                        fontSize: '9px',
+                        color: '#ccc'
+                      }}>一氧化碳</span>
+                      <span className="data-value" style={{ 
+                        color: point.co > 50 ? '#ff6b6b' : '#4ecdc4',
+                        fontSize: '10px',
+                        fontWeight: 'bold'
+                      }}>
+                        {point.co.toFixed(1)} ppm
+                      </span>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    gap: '8px'
+                  }}>
+                    <div className="data-item" style={{
+                      flex: 1,
                       display: 'flex',
                       justifyContent: 'space-between',
                       alignItems: 'center'
@@ -268,39 +451,10 @@ export function MonitoringMatrix() {
                       </span>
                     </div>
                     <div className="data-item" style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>硫化氢</span>
-                      <span className="data-value" style={{ 
-                        color: point.h2s > 0.05 ? '#ff9ff3' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.h2s.toFixed(2)} ppm
-                      </span>
-                    </div>
-                    <div className="data-item" style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>氧气</span>
-                      <span className="data-value" style={{ 
-                        color: point.oxygen < 20.5 ? '#ff6b6b' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.oxygen.toFixed(1)}%
-                      </span>
-                    </div>
+                      flex: 1,
+                      visibility: 'hidden'
+                    }}></div>
+                  </div>
                   </>
                 ) : (
                   <div className="offline-message" style={{
@@ -321,8 +475,8 @@ export function MonitoringMatrix() {
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginTop: '6px',
-                paddingTop: '4px',
+                marginTop: '3px',
+                paddingTop: '2px',
                 borderTop: '1px solid rgba(78, 205, 196, 0.2)'
               }}>
                 <span className="update-time" style={{
@@ -361,7 +515,8 @@ export function MonitoringMatrix() {
                 </div>
               </div>
             </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
     </div>
