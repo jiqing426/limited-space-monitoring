@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@clickhouse/client':
+        specifier: ^1.11.2
+        version: 1.11.2
       '@react-three/drei':
         specifier: ^10.0.8
         version: 10.0.8(@react-three/fiber@9.1.2(@types/react@19.1.6)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.176.0))(@types/react@19.1.6)(@types/three@0.176.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(three@0.176.0)
@@ -71,6 +74,13 @@ packages:
   '@babel/runtime@7.27.3':
     resolution: {integrity: sha512-7EYtGezsdiDMyY80+65EzwiGmcJqpmcZCojSXaRgdrBaGtWTgDZKq69cPIVped6MkIM78cTQ2GOiEYjwOlG4xw==}
     engines: {node: '>=6.9.0'}
+
+  '@clickhouse/client-common@1.11.2':
+    resolution: {integrity: sha512-H4ECHqaipzMgiZKqpb1Z4N3Ofq+lVTCn8I59XsSynqrsfR4jWZD3PipXVvIzMpDmTMvrlJWrOwAdm0DMNiMQbA==}
+
+  '@clickhouse/client@1.11.2':
+    resolution: {integrity: sha512-ZE7Q1qxsDNXCkGPf1zqmhpZpwAKxKT+1s4Z432J1Mb2Gm26Y4tG/sJoug81AfAJTt6s7taO2vzNBAKfSR3SStg==}
+    engines: {node: '>=16'}
 
   '@dimforge/rapier3d-compat@0.12.0':
     resolution: {integrity: sha512-uekIGetywIgopfD97oDL5PfeezkFpNhwlzlaEYNOA0N6ghdsOvh/HYjSMek5Q2O1PYvRSDFcqFVJl4r4ZBwOow==}
@@ -959,6 +969,12 @@ snapshots:
       '@jridgewell/trace-mapping': 0.3.25
 
   '@babel/runtime@7.27.3': {}
+
+  '@clickhouse/client-common@1.11.2': {}
+
+  '@clickhouse/client@1.11.2':
+    dependencies:
+      '@clickhouse/client-common': 1.11.2
 
   '@dimforge/rapier3d-compat@0.12.0': {}
 

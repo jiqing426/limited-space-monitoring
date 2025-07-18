@@ -6,11 +6,68 @@ import { AlertTriangle, CheckCircle, Thermometer, Droplets, Wind, Flame, Skull, 
 // 空气质量统计组件
 export function AirQualityStats() {
   const [stats, setStats] = useState({
-    totalSensors: 24,
-    onlineSensors: 24,
-    alertCount: 2,
-    safetyLevel: '良好'
+    totalSensors: 0,
+    onlineSensors: 0,
+    alertCount: 0,
+    safetyLevel: '未知'
   });
+
+  // 获取监测点数据
+  const fetchMonitoringData = async () => {
+    try {
+      const response = await fetch('/api/clickhouse/monitoring-points');
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        // 统计设备数量
+        const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
+        const totalDevices = deviceIds.length;
+        
+        // 统计在线设备数（有任意数据的设备视为在线）
+        const onlineDevices = deviceIds.filter(deviceId => {
+          const deviceData = result.data.find((item: any) => item.device_id === deviceId);
+          return deviceData && (
+            deviceData.temperature || 
+            deviceData.humidity || 
+            deviceData.oxygen || 
+            deviceData.h2s || 
+            deviceData.co2 || 
+            deviceData.co || 
+            deviceData.methane
+          );
+        }).length;
+        
+        // 统计告警数量（任意气体超标）
+        const alerts = result.data.filter((item: any) => (
+          (item.methane > 2.5) || 
+          (item.h2s > 0.05) || 
+          (item.oxygen < 20.0) || 
+          (item.co2 > 1000) || 
+          (item.co > 50)
+        )).length;
+        
+        // 更新状态
+        setStats({
+          totalSensors: totalDevices,
+          onlineSensors: onlineDevices,
+          alertCount: alerts,
+          safetyLevel: alerts > 0 ? '异常' : '良好'
+        });
+      }
+    } catch (error) {
+      console.error('获取监测点数据失败:', error);
+    }
+  };
+
+  useEffect(() => {
+    // 立即执行一次
+    fetchMonitoringData();
+    
+    // 每10秒更新一次
+    const interval = setInterval(fetchMonitoringData, 10000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="air-quality-stats-container">
@@ -53,56 +110,7 @@ export function AirQualityStats() {
   );
 }
 
-// 安全预警组件
-export function SafetyAlerts() {
-  const [alerts, setAlerts] = useState([
-    { id: 1, type: '甲烷浓度', level: 'warning', value: '2.8 ppm', time: '14:32', location: 'A区-3号点' },
-    { id: 2, type: '氧气浓度', level: 'info', value: '19.2%', time: '14:28', location: 'B区-1号点' },
-    { id: 3, type: '硫化氢', level: 'normal', value: '0.03 ppm', time: '14:25', location: 'C区-2号点' }
-  ]);
 
-  const getLevelColor = (level: string) => {
-    switch (level) {
-      case 'warning': return '#feca57';
-      case 'danger': return '#ff6b6b';
-      case 'info': return '#45b7d1';
-      default: return '#4ecdc4';
-    }
-  };
-
-  const getLevelIcon = (level: string) => {
-    switch (level) {
-      case 'warning': return <AlertTriangle size={16} />;
-      case 'danger': return <AlertTriangle size={16} />;
-      default: return <CheckCircle size={16} />;
-    }
-  };
-
-  return (
-    <div className="air-quality-stats-container">
-      <h3 className="chart-title">安全预警</h3>
-      <div className="alerts-content">
-        {alerts.map((alert) => (
-          <div key={alert.id} className="alert-item">
-            <div className="alert-icon" style={{ color: getLevelColor(alert.level) }}>
-              {getLevelIcon(alert.level)}
-            </div>
-            <div className="alert-info">
-              <div className="alert-header">
-                <span className="alert-type">{alert.type}</span>
-                <span className="alert-time">{alert.time}</span>
-              </div>
-              <div className="alert-details">
-                <span className="alert-value">{alert.value}</span>
-                <span className="alert-location">{alert.location}</span>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
 
 // 环境监测组件
 export function EnvironmentMonitor() {
