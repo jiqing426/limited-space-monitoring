@@ -1,16 +1,47 @@
 'use client';
 
+import type { ReactElement } from 'react';
 import { useState, useEffect } from 'react';
 import ThreeJSViewer from '../demo2/components/ThreeJSViewer';
 import { AirQualityStats, EnvironmentMonitor } from './components/AirQualityComponents';
-import { RealTimeChart, HistoryChart } from './components/AirQualityCharts';
+import { HistoryChart, PredictionChart } from './components/AirQualityCharts';
 import { MonitoringMatrix } from './components/MonitoringMatrix';
 
-export default function Demo1() {
+export default function Demo1(): ReactElement {
   const [currentTime, setCurrentTime] = useState('');
   const [currentDate, setCurrentDate] = useState('');
   const [showVideo, setShowVideo] = useState(true);
   const [has3DLoaded, setHas3DLoaded] = useState(false);
+  const [sensorStats, setSensorStats] = useState({ total: 0, online: 0 });
+
+  useEffect(() => {
+    // 获取传感器状态
+    const fetchSensorStats = async () => {
+      try {
+        const response = await fetch('/api/clickhouse/monitoring-points');
+        const result = await response.json();
+        
+        if (result.success && Array.isArray(result.data)) {
+          // 获取所有设备ID
+          const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
+          setSensorStats({
+            total: deviceIds.length,
+            online: deviceIds.length
+          });
+        }
+      } catch (error) {
+        console.error('获取传感器状态失败:', error);
+      }
+    };
+
+    // 立即执行一次
+    fetchSensorStats();
+    
+    // 设置定时器定期更新
+    const statsInterval = setInterval(fetchSensorStats, 30000); // 每30秒更新一次
+
+    return () => clearInterval(statsInterval);
+  }, []);
 
   useEffect(() => {
     const updateDateTime = () => {
@@ -46,7 +77,7 @@ export default function Demo1() {
         </div>
         <div className="header-info header-info-r">
           <span className="weather-info">监测状态：正常</span>
-          <span className="location-info">传感器在线：24/24</span>
+          <span className="location-info">传感器在线：{sensorStats.online}/{sensorStats.total}</span>
         </div>
       </header>
 
@@ -81,15 +112,15 @@ export default function Demo1() {
                 >
                   介绍视频
                 </button>
-                                  <button 
-                    className={`toggle-btn ${!showVideo ? 'active' : ''}`}
-                    onClick={() => {
-                      setShowVideo(false);
-                      setHas3DLoaded(true);
-                    }}
-                  >
-                    3D模型
-                  </button>
+                <button 
+                  className={`toggle-btn ${!showVideo ? 'active' : ''}`}
+                  onClick={() => {
+                    setShowVideo(false);
+                    setHas3DLoaded(true);
+                  }}
+                >
+                  3D模型
+                </button>
               </div>
 
               <div className="air-quality-3d-content">
@@ -133,19 +164,19 @@ export default function Demo1() {
 
           {/* 右侧列 */}
           <div className="air-quality-column right-column">
-            {/* 历史数据分析 */}
-            <div className="air-quality-panel" style={{ height: '50%' }}>
-              <h3 className="chart-title">24小时历史数据</h3>
-              <div className="chart-div" style={{ flex: 1 }}>
-                <HistoryChart />
+            {/* 气体预测 - 现在放在上面 */}
+            <div className="air-quality-panel" style={{ height: '32%' }}> {/* 减小高度 */}
+              <h3 className="chart-title">气体浓度预测</h3>
+              <div className="chart-div" style={{ flex: 1, marginTop: '5px' }}> {/* 添加上边距，避免与按钮重叠 */}
+                <PredictionChart />
               </div>
             </div>
             
-            {/* 实时数据图表 */}
-            <div className="air-quality-panel" style={{ height: '50%' }}>
-              <h3 className="chart-title">实时气体浓度监测</h3>
+            {/* 历史数据分析 - 现在放在下面 */}
+            <div className="air-quality-panel" style={{ height: '38%' }}> {/* 增加高度 */}
+              <h3 className="chart-title">24小时历史数据</h3>
               <div className="chart-div" style={{ flex: 1 }}>
-                <RealTimeChart />
+                <HistoryChart />
               </div>
             </div>
           </div>
@@ -153,4 +184,4 @@ export default function Demo1() {
       </div>
     </div>
   );
-} 
+}

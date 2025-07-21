@@ -120,7 +120,6 @@ export function MonitoringMatrix() {
             硫化氢: data.h2s,
             二氧化碳: data.co2,
             一氧化碳: data.co,
-            继电器状态: data.relay_status,
             记录时间: data.record_time,
             创建时间: data.create_time
           });
@@ -133,13 +132,19 @@ export function MonitoringMatrix() {
           const pointIndex = (index % 2) + 1;
           const pointId = `${zones[zoneIndex]}${pointIndex.toString().padStart(2, '0')}`;
           
-          // 根据气体浓度判断状态
+          // 修改状态判断逻辑
           let status: 'normal' | 'warning' | 'danger' | 'offline' = 'normal';
-          if (!data.oxygen && !data.methane && !data.h2s) {
-            status = 'offline';
-          } else if (data.methane > 2.5 || data.h2s > 0.05 || data.oxygen < 20.0) {
-            status = 'warning';
-          } else if (data.methane > 3.0 || data.h2s > 0.1 || data.oxygen < 19.0) {
+
+          // 危险级别判断
+          if (
+            data.oxygen === 0 ||        // 氧气为0时直接判定危险
+            data.oxygen <= 19.5 ||      // 氧气低于 19.5%
+            data.oxygen >= 23.5 ||      // 氧气高于 23.5%
+            data.methane >= 1.25 ||     // 甲烷超过 1.25% LEL
+            data.h2s >= 10 ||           // 硫化氢超过 10ppm
+            data.co >= 100 ||           // 一氧化碳超过 100ppm
+            data.co2 >= 5000            // 二氧化碳超过 5000ppm
+          ) {
             status = 'danger';
           }
 
@@ -156,10 +161,10 @@ export function MonitoringMatrix() {
             co: data.co || 0,
             methane: data.methane || 0,
             lastUpdate: new Date().toLocaleTimeString('zh-CN', { 
-                hour: '2-digit', 
-                minute: '2-digit',
-                second: '2-digit'
-              })
+              hour: '2-digit', 
+              minute: '2-digit',
+              second: '2-digit'
+            })
           };
         });
 
@@ -179,6 +184,19 @@ export function MonitoringMatrix() {
   };
 
   useEffect(() => {
+    // 生成24小时的历史数据
+    const hours: string[] = [];
+    const avgMethane: number[] = [];
+    const avgH2s: number[] = [];
+    const avgOxygen: number[] = [];
+    const maxMethane: number[] = [];
+    const maxH2s: number[] = [];
+    const maxOxygen: number[] = [];
+    const coData: number[] = [];
+    const maxCo: number[] = [];
+    const co2Data: number[] = [];
+    const maxCo2: number[] = [];
+
     // 立即执行一次数据请求
     fetchClickHouseData();
     
@@ -223,7 +241,7 @@ export function MonitoringMatrix() {
           gridTemplateColumns: 'repeat(3, 1fr)',
           gap: '6px',
           padding: '6px 3px',
-          minHeight: '200px'
+          minHeight: '100px'
         }}>
           {monitoringPoints.length === 0 ? (
             <div style={{
@@ -294,8 +312,8 @@ export function MonitoringMatrix() {
                 flexDirection: 'column',
                 gap: '2px'
               }}>
-                {point.status !== 'offline' ? (
-                  <>
+                {/* 移除离线判断条件，直接显示数据 */}
+                <>
                   {/* 温度和湿度 */}
                   <div style={{
                     display: 'flex',
@@ -455,20 +473,7 @@ export function MonitoringMatrix() {
                       visibility: 'hidden'
                     }}></div>
                   </div>
-                  </>
-                ) : (
-                  <div className="offline-message" style={{
-                    textAlign: 'center',
-                    color: '#666',
-                    fontSize: '9px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '2px'
-                  }}>
-                    <span>设备离线</span>
-                    <span>请检查连接</span>
-                  </div>
-                )}
+                </>
               </div>
               
               <div className="point-footer" style={{
