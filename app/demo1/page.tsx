@@ -85,7 +85,7 @@ export default function Demo1(): ReactElement {
     <div className="dashboard-container air-quality-dashboard">
       {/* 头部 */}
       <header className="dashboard-header">
-        <h4 className="header-title">地下管廊有害气体监测系统</h4>
+        <h2 className="header-title" style={{ fontWeight: '800' }}>地下管廊有害气体监测系统</h2>
         <div className="header-info header-info-l">
           <span className="time-display">{currentTime}</span>
           <span className="date-display">{currentDate}</span>
@@ -105,12 +105,12 @@ export default function Demo1(): ReactElement {
           {/* 左侧列 */}
           <div className="air-quality-column left-column">
             {/* 空气质量统计 */}
-            <div className="air-quality-panel">
+            <div className="air-quality-panel" style={{ padding: '6px' }}>
               <AirQualityStats />
             </div>
             
             {/* 环境监测 */}
-            <div className="air-quality-panel">
+            <div className="air-quality-panel" style={{ padding: '6px' }}>
               <EnvironmentMonitor />
             </div>
           </div>
@@ -171,27 +171,36 @@ export default function Demo1(): ReactElement {
               </div>
             </div>
             
-            {/* 监测点矩阵 */}
-            <div className="air-quality-panel" style={{ height: '40%' }}>
-              <MonitoringMatrix />
+            {/* 24小时历史数据 */}
+            <div className="air-quality-panel" style={{ 
+              height: '40%',
+              padding: '6px'
+            }}>
+              <h3 className="chart-title">24小时历史数据</h3>
+              <div className="chart-div" style={{ flex: 1 }}>
+                <HistoryChart showPeakValues={false} />
+              </div>
             </div>
           </div>
 
           {/* 右侧列 */}
           <div className="air-quality-column right-column">
-            {/* 气体预测 - 现在放在上面 */}
-            <div className="air-quality-panel" style={{ height: '32%' }}> {/* 减小高度 */}
-              <h3 className="chart-title">气体浓度预测</h3>
-              <div className="chart-div" style={{ flex: 1, marginTop: '5px' }}> {/* 添加上边距，避免与按钮重叠 */}
-                <PredictionChart />
-              </div>
+            {/* 监测点矩阵 */}
+            <div className="air-quality-panel" style={{ 
+              height: '32%',
+              padding: '6px'  // 减小内边距
+            }}>
+              <MonitoringMatrix />
             </div>
-            
-            {/* 历史数据分析 - 现在放在下面 */}
-            <div className="air-quality-panel" style={{ height: '38%' }}> {/* 增加高度 */}
-              <h3 className="chart-title">24小时历史数据</h3>
+
+            {/* 气体浓度预测 */}
+            <div className="air-quality-panel" style={{ 
+              height: '38%',
+              padding: '6px'  // 保持一致的内边距
+            }}>
+              <h3 className="chart-title">气体浓度预测</h3>
               <div className="chart-div" style={{ flex: 1 }}>
-                <HistoryChart />
+                <PredictionChart />
               </div>
             </div>
           </div>

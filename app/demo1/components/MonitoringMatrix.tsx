@@ -215,7 +215,6 @@ export function MonitoringMatrix() {
         height: 'calc(100% - 40px)',
         overflowY: 'auto',
         padding: '0 5px',
-        /* 自定义滚动条样式 */
         scrollbarWidth: 'thin',
         scrollbarColor: '#4ecdc4 transparent'
       }}>
@@ -235,12 +234,37 @@ export function MonitoringMatrix() {
           .monitoring-matrix-container::-webkit-scrollbar-thumb:hover {
             background: #45b7d1;
           }
+          .monitoring-point {
+            transition: all 0.3s ease;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            position: relative;
+            overflow: hidden;
+          }
+          .monitoring-point:hover {
+            border-color: #4ecdc4;
+            box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+          }
+          .monitoring-point::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(78, 205, 196, 0.1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: 7px;
+          }
+          .monitoring-point:hover::before {
+            opacity: 1;
+          }
         `}</style>
         <div className="monitoring-matrix" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
+          gridTemplateColumns: 'repeat(2, 1fr)',
           gap: '6px',
-          padding: '6px 3px',
           minHeight: '100px'
         }}>
           {monitoringPoints.length === 0 ? (
@@ -262,7 +286,6 @@ export function MonitoringMatrix() {
             monitoringPoints.map((point) => (
             <div key={point.id} className="monitoring-point" style={{
               backgroundColor: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(78, 205, 196, 0.3)',
               borderRadius: '8px',
               padding: '6px',
               fontSize: '11px',
@@ -310,170 +333,210 @@ export function MonitoringMatrix() {
               <div className="point-data" style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '2px'
+                gap: '0'  // 移除外层间距
               }}>
-                {/* 移除离线判断条件，直接显示数据 */}
-                <>
-                  {/* 温度和湿度 */}
-                  <div style={{
+                {/* 所有数据项单行展示 */}
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '0'  // 移除内层间距
+                }}>
+                  {/* 温度 */}
+                  <div className="data-item" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    gap: '8px'
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'  // 移除内边距
                   }}>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
+                    <span className="data-label" style={{
+                      fontSize: '10px',  // 减小字体
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'  // 移除左内边距
+                    }}>温度</span>
+                    <span className="data-value" style={{ 
+                      color: '#4ecdc4',
+                      fontSize: '10px',  // 减小字体
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'  // 添加少许右边距
                     }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>温度</span>
-                      <span className="data-value" style={{ 
-                        color: '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.temperature.toFixed(1)}°C
-                      </span>
-                    </div>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>湿度</span>
-                      <span className="data-value" style={{ 
-                        color: '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.humidity.toFixed(1)}%
-                      </span>
-                    </div>
+                      {point.temperature.toFixed(1)}°C
+                    </span>
                   </div>
 
-                  {/* 气体数据 */}
-                  <div style={{
+                  {/* 湿度 */}
+                  <div className="data-item" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    gap: '8px'
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'
                   }}>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
+                    <span className="data-label" style={{
+                      fontSize: '10px',
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'
+                    }}>湿度</span>
+                    <span className="data-value" style={{ 
+                      color: '#4ecdc4',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'
                     }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>氧气</span>
-                      <span className="data-value" style={{ 
-                        color: point.oxygen < 20.5 ? '#ff6b6b' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.oxygen.toFixed(1)}%
-                      </span>
-                    </div>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>硫化氢</span>
-                      <span className="data-value" style={{ 
-                        color: point.h2s > 0.05 ? '#ff9ff3' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.h2s.toFixed(2)} ppm
-                      </span>
-                    </div>
+                      {point.humidity.toFixed(1)}%
+                    </span>
                   </div>
 
-                  <div style={{
+                  {/* 氧气 */}
+                  <div className="data-item" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    gap: '8px'
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'
                   }}>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
+                    <span className="data-label" style={{
+                      fontSize: '10px',
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'
+                    }}>氧气</span>
+                    <span className="data-value" style={{ 
+                      color: point.oxygen < 20.5 ? '#ff6b6b' : '#4ecdc4',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'
                     }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>二氧化碳</span>
-                      <span className="data-value" style={{ 
-                        color: point.co2 > 1000 ? '#feca57' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.co2.toFixed(1)} ppm
-                      </span>
-                    </div>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>一氧化碳</span>
-                      <span className="data-value" style={{ 
-                        color: point.co > 50 ? '#ff6b6b' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.co.toFixed(1)} ppm
-                      </span>
-                    </div>
+                      {point.oxygen.toFixed(1)}%
+                    </span>
                   </div>
 
-                  <div style={{
+                  {/* 硫化氢 */}
+                  <div className="data-item" style={{
                     display: 'flex',
                     justifyContent: 'space-between',
-                    gap: '8px'
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'
                   }}>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
+                    <span className="data-label" style={{
+                      fontSize: '10px',
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'
+                    }}>硫化氢</span>
+                    <span className="data-value" style={{ 
+                      color: point.h2s > 0.05 ? '#ff9ff3' : '#4ecdc4',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'
                     }}>
-                      <span className="data-label" style={{
-                        fontSize: '9px',
-                        color: '#ccc'
-                      }}>甲烷</span>
-                      <span className="data-value" style={{ 
-                        color: point.methane > 2.5 ? '#feca57' : '#4ecdc4',
-                        fontSize: '10px',
-                        fontWeight: 'bold'
-                      }}>
-                        {point.methane.toFixed(1)} ppm
-                      </span>
-                    </div>
-                    <div className="data-item" style={{
-                      flex: 1,
-                      visibility: 'hidden'
-                    }}></div>
+                      {point.h2s.toFixed(2)} ppm
+                    </span>
                   </div>
-                </>
+
+                  {/* 二氧化碳 */}
+                  <div className="data-item" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'
+                  }}>
+                    <span className="data-label" style={{
+                      fontSize: '10px',
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'
+                    }}>二氧化碳</span>
+                    <span className="data-value" style={{ 
+                      color: point.co2 > 1000 ? '#feca57' : '#4ecdc4',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'
+                    }}>
+                      {point.co2.toFixed(1)} ppm
+                    </span>
+                  </div>
+
+                  {/* 一氧化碳 */}
+                  <div className="data-item" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'
+                  }}>
+                    <span className="data-label" style={{
+                      fontSize: '10px',
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'
+                    }}>一氧化碳</span>
+                    <span className="data-value" style={{ 
+                      color: point.co > 50 ? '#ff6b6b' : '#4ecdc4',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'
+                    }}>
+                      {point.co.toFixed(1)} ppm
+                    </span>
+                  </div>
+
+                  {/* 甲烷 */}
+                  <div className="data-item" style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    backgroundColor: 'rgba(30, 41, 59, 0.5)',
+                    borderRadius: '4px',
+                    height: '18px',
+                    marginBottom: '0',
+                    padding: '0'
+                  }}>
+                    <span className="data-label" style={{
+                      fontSize: '10px',
+                      color: '#94a3b8',
+                      lineHeight: '18px',
+                      paddingLeft: '0'
+                    }}>甲烷</span>
+                    <span className="data-value" style={{ 
+                      color: point.methane > 2.5 ? '#feca57' : '#4ecdc4',
+                      fontSize: '10px',
+                      fontWeight: '600',
+                      lineHeight: '18px',
+                      paddingRight: '4px'
+                    }}>
+                      {point.methane.toFixed(1)} ppm
+                    </span>
+                  </div>
+                </div>
               </div>
               
               <div className="point-footer" style={{

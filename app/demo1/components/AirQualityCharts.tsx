@@ -3,14 +3,15 @@
 import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
 
-// 实时气体浓度监测图表
-// 删除整个 RealTimeChart 组件
-// 从第7行到第268行的 RealTimeChart 函数定义
 
 // 24小时历史数据图表（美化版）
-export function HistoryChart() {
+interface HistoryChartProps {
+  showPeakValues?: boolean;
+  peakValuesOnly?: boolean;
+}
+
+export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: HistoryChartProps) {
   const chartRef = useRef<HTMLDivElement>(null);
-  const peakDataRef = useRef<HTMLDivElement>(null);
   const [historyData, setHistoryData] = useState({
     hours: [] as string[],
     avgMethane: [] as number[],
@@ -29,25 +30,74 @@ export function HistoryChart() {
   const getLatestPeakValues = () => {
     if (historyData.hours.length === 0) return null;
 
-    // 使用实际的平均值数据计算峰值
     return {
       methane: {
-        peak: Math.max(...historyData.avgMethane)  // 使用avgMethane
+        peak: Math.max(...historyData.maxMethane)
       },
       h2s: {
-        peak: Math.max(...historyData.avgH2s)  // 使用avgH2s
+        peak: Math.max(...historyData.maxH2s)
       },
       oxygen: {
-        peak: Math.max(...historyData.avgOxygen)  // 使用avgOxygen
+        peak: Math.max(...historyData.maxOxygen)
       },
       co: {
-        peak: Math.max(...historyData.coData)  // 使用coData
+        peak: Math.max(...historyData.maxCo)
       },
       co2: {
-        peak: Math.max(...historyData.co2Data)  // 使用co2Data
+        peak: Math.max(...historyData.maxCo2)
       }
     };
   };
+
+  // 如果只显示峰值数据，返回不同的布局
+  if (peakValuesOnly) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        backgroundColor: 'rgba(30, 41, 59, 0.5)',
+        padding: '4px 8px',
+        borderRadius: '4px',
+        transform: 'scale(0.85)',
+        transformOrigin: 'right center'
+      }}>
+        <span style={{ 
+          fontSize: '10px',
+          color: '#94a3b8'
+        }}>气体峰值</span>
+        {getLatestPeakValues() && (
+          <div style={{
+            display: 'flex',
+            gap: '8px'
+          }}>
+            {Object.entries(getLatestPeakValues()!).map(([key, data]) => (
+              <div key={key} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px'
+              }}>
+                <span style={{ 
+                  fontSize: '10px',
+                  color: '#94a3b8'
+                }}>{key === 'h2s' ? '硫化氢' : 
+                    key === 'co2' ? '二氧化碳' :
+                    key === 'co' ? '一氧化碳' :
+                    key === 'oxygen' ? '氧气' : '甲烷'}</span>
+                <span style={{ 
+                  fontSize: '10px',
+                  color: '#fbbf24',
+                  fontWeight: '600'
+                }}>
+                  {data.peak}{key === 'oxygen' ? '%' : 'ppm'}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   useEffect(() => {
     // 生成24小时的历史数据
@@ -120,6 +170,29 @@ export function HistoryChart() {
           borderWidth: 1,
           textStyle: {
             color: '#fff'
+          },
+          formatter: function(params: any) {
+            let result = `${params[0].axisValue}<br/>`;
+            params.forEach((param: any) => {
+              const marker = param.marker;
+              const seriesName = param.seriesName;
+              const value = typeof param.value === 'number' ? param.value.toFixed(2) : param.value;
+              let unit = '';
+              
+              // 根据气体类型设置单位
+              if (seriesName.includes('氧气')) {
+                unit = '%';
+              } else if (seriesName.includes('温度')) {
+                unit = '°C';
+              } else if (seriesName.includes('湿度')) {
+                unit = '%';
+              } else {
+                unit = 'ppm';
+              }
+
+              result += `${marker} ${seriesName}: ${value}${unit}<br/>`;
+            });
+            return result;
           }
         },
         legend: {
@@ -132,7 +205,7 @@ export function HistoryChart() {
           },
           itemWidth: 12,
           itemHeight: 8,
-          itemGap: 0  // 增加间距
+          itemGap: 10  // 增加间距
         },
         grid: {
           left: '3%',
@@ -309,90 +382,42 @@ export function HistoryChart() {
 
   return (
     <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* 折线图 */}
-      <div ref={chartRef} style={{ 
-        height: 'calc(100% - 65px)',
-        marginBottom: '15px',  // 增加与峰值的间距
-        paddingTop: '25px'
-      }} />
-
-      {/* 峰值数据展示 */}
-      {getLatestPeakValues() && (
+      {/* 只在需要时显示峰值数据 */}
+      {showPeakValues && getLatestPeakValues() && (
         <div style={{
           display: 'flex',
-          justifyContent: 'center',
-          width: '100%',
-          height: '70px',  // 增加整体高度
-          marginTop: '5px'
+          gap: '8px'
         }}>
-          <div style={{
-            background: 'rgba(30, 41, 59, 0.8)',
-            borderRadius: '4px',
-            padding: '8px 12px',
-            transform: 'scale(0.82)',  // 缩小比例
-            transformOrigin: 'center top',
-            border: '1px solid rgba(176, 194, 249, 0.2)',
-            boxShadow: '0 0 4px rgba(176, 194, 249, 0.1)',
-            position: 'relative',
-            bottom: '10px',
-            display: 'flex',
-            flexDirection: 'column',  // 改为纵向排列
-            alignItems: 'flex-start', // 左对齐
-            width: 'auto',
-            whiteSpace: 'nowrap',
-            maxWidth: '600px'  // 限制最大宽度
-          }}>
-            <div style={{ 
-              fontSize: '13px',
-              color: '#94a3b8',
-              marginBottom: '8px',  // 添加底部间距
-              fontWeight: '500',
-              paddingLeft: '4px'    // 稍微缩进
+          {Object.entries(getLatestPeakValues()!).map(([key, data]) => (
+            <div key={key} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
             }}>
-              气体峰值
+              <span style={{ 
+                fontSize: '10px',
+                color: '#94a3b8'
+              }}>{key === 'h2s' ? '硫化氢' : 
+                  key === 'co2' ? '二氧化碳' :
+                  key === 'co' ? '一氧化碳' :
+                  key === 'oxygen' ? '氧气' : '甲烷'}</span>
+              <span style={{ 
+                fontSize: '10px',
+                color: '#fbbf24',
+                fontWeight: '600'
+              }}>
+                {data.peak}{key === 'oxygen' ? '%' : 'ppm'}
+              </span>
             </div>
-            <div style={{ 
-              display: 'flex', 
-              flexDirection: 'row',
-              gap: '12px',  // 减小间距
-              flexWrap: 'nowrap',
-              justifyContent: 'center',
-              lineHeight: '1',
-              minWidth: 'fit-content',
-              width: '100%'  // 确保数据占满宽度
-            }}>
-              {Object.entries(getLatestPeakValues()!).map(([key, data]) => (
-                <div key={key} style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '2px',
-                  padding: '0 4px'  // 减小内边距
-                }}>
-                  <span style={{
-                    fontSize: '10px',
-                    color: '#f8fafc',
-                    lineHeight: '1.2'
-                  }}>
-                    {key === 'methane' ? '甲烷' :
-                     key === 'h2s' ? '硫化氢' :
-                     key === 'oxygen' ? '氧气' :
-                     key === 'co' ? '一氧化碳' : '二氧化碳'}
-                  </span>
-                  <span style={{ 
-                    fontSize: '11px',
-                    color: '#fbbf24',
-                    fontWeight: '500',
-                    lineHeight: '1.2'
-                  }}>
-                    {data.peak}{key === 'oxygen' ? '%' : 'ppm'}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       )}
+
+      {/* 折线图 */}
+      <div ref={chartRef} style={{ 
+        flex: 1,
+        marginTop: showPeakValues ? '8px' : '0'
+      }} />
     </div>
   );
 }
@@ -544,7 +569,7 @@ export function PredictionChart() {
           smooth: true,
           symbol: 'emptyCircle',
           symbolSize: 4,
-          lineStyle: { width: 2, color: '#feca57' },
+          lineStyle: { width: 2,type: 'dashed', color: '#feca57' },
           itemStyle: { color: '#feca57' },
           connectNulls: false  // 不连接 null 值点
         },
@@ -567,7 +592,7 @@ export function PredictionChart() {
           smooth: true,
           symbol: 'emptyCircle',
           symbolSize: 4,
-          lineStyle: { width: 2, color: '#ff9ff3' },
+          lineStyle: { width: 2, type: 'dashed',color: '#ff9ff3' },
           itemStyle: { color: '#ff9ff3' },
           connectNulls: false  // 不连接 null 值点
         },
@@ -590,7 +615,7 @@ export function PredictionChart() {
           smooth: true,
           symbol: 'emptyCircle',
           symbolSize: 4,
-          lineStyle: { width: 2, color: '#45b7d1' },
+          lineStyle: { width: 2,type: 'dashed', color: '#45b7d1' },
           itemStyle: { color: '#45b7d1' },
           connectNulls: false  // 不连接 null 值点
         }

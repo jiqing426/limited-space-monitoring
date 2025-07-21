@@ -154,7 +154,6 @@ export function AirQualityStats() {
             <div className="stat-label-en">SAFETY LEVEL</div>
             <div className="stat-value" style={{ 
               color: stats.safetyLevel === '危险' ? '#ef4444' : '#10b981',  // 危险时显示红色，否则保持绿色
-              fontWeight: 'bold' 
             }}>
               {stats.safetyLevel}
             </div>
