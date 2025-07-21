@@ -12,33 +12,48 @@ export default function Demo1(): ReactElement {
   const [currentDate, setCurrentDate] = useState('');
   const [showVideo, setShowVideo] = useState(true);
   const [has3DLoaded, setHas3DLoaded] = useState(false);
-  const [sensorStats, setSensorStats] = useState({ total: 0, online: 0 });
+  const [sensorStats, setSensorStats] = useState({ total: 1, online: 0 });  // 默认至少有1个传感器
 
   useEffect(() => {
     // 获取传感器状态
     const fetchSensorStats = async () => {
       try {
-        const response = await fetch('/api/clickhouse/monitoring-points');
+        const response = await fetch('/api/clickhouse/monitoring-points', {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const result = await response.json();
         
         if (result.success && Array.isArray(result.data)) {
           // 获取所有设备ID
           const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
           setSensorStats({
-            total: deviceIds.length,
+            total: Math.max(1, deviceIds.length),  // 至少显示1个传感器
             online: deviceIds.length
           });
+        } else {
+          console.warn('API返回数据格式不正确:', result);
+          setSensorStats({ total: 1, online: 0 });
         }
       } catch (error) {
         console.error('获取传感器状态失败:', error);
+        setSensorStats({ total: 1, online: 0 });  // 发生错误时显示离线状态
       }
     };
 
     // 立即执行一次
     fetchSensorStats();
     
-    // 设置定时器定期更新
-    const statsInterval = setInterval(fetchSensorStats, 30000); // 每30秒更新一次
+    // 设置定时器定期更新，增加更新频率
+    const statsInterval = setInterval(fetchSensorStats, 10000); // 每10秒更新一次
 
     return () => clearInterval(statsInterval);
   }, []);
