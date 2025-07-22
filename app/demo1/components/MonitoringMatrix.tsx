@@ -20,6 +20,7 @@ interface MonitoringPoint {
 
 export function MonitoringMatrix() {
   const [monitoringPoints, setMonitoringPoints] = useState<MonitoringPoint[]>([]);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -74,6 +75,7 @@ export function MonitoringMatrix() {
       });
       
       if (result.success && result.data) {
+        setConnectionError(null);  // 清除错误状态
         console.log('✅ ClickHouse 数据请求成功');
         console.log('📋 数据源:', result.source);
         console.log('📏 数据行数:', result.rows);
@@ -174,12 +176,16 @@ export function MonitoringMatrix() {
         
       } else {
         console.error('❌ ClickHouse 数据请求失败:', result.message || result.error || 'Unknown error');
+        setConnectionError('数据库连接失败');
+        setMonitoringPoints([]);
         if (result.error) {
           console.error('🔍 错误详情:', result.error);
         }
       }
     } catch (error) {
       console.error('🚨 ClickHouse 请求异常:', error instanceof Error ? error.message : error);
+      setConnectionError('数据库连接异常');
+      setMonitoringPoints([]);
     }
   };
 
@@ -267,7 +273,27 @@ export function MonitoringMatrix() {
           gap: '6px',
           minHeight: '100px'
         }}>
-          {monitoringPoints.length === 0 ? (
+          {connectionError ? (
+            <div style={{
+              gridColumn: '1 / -1',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '40px 20px',
+              color: '#ff6b6b',
+              fontSize: '14px',
+              textAlign: 'center'
+            }}>
+              <div style={{ marginBottom: '10px', fontSize: '24px' }}>⚠️</div>
+              <div>{connectionError}</div>
+              <div style={{ 
+                fontSize: '12px', 
+                marginTop: '5px',
+                color: '#94a3b8'
+              }}>请检查数据库连接状态</div>
+            </div>
+          ) : monitoringPoints.length === 0 ? (
             <div style={{
               gridColumn: '1 / -1',
               display: 'flex',

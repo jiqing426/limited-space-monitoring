@@ -12,7 +12,8 @@ export default function Demo1(): ReactElement {
   const [currentDate, setCurrentDate] = useState('');
   const [showVideo, setShowVideo] = useState(true);
   const [has3DLoaded, setHas3DLoaded] = useState(false);
-  const [sensorStats, setSensorStats] = useState({ total: 1, online: 0 });  // 默认至少有1个传感器
+  const [sensorStats, setSensorStats] = useState({ total: 0, online: 0 });
+  const [monitoringStatus, setMonitoringStatus] = useState<'正常' | '异常'>('异常');  // 初始状态设为异常
 
   useEffect(() => {
     // 获取传感器状态
@@ -32,27 +33,30 @@ export default function Demo1(): ReactElement {
 
         const result = await response.json();
         
-        if (result.success && Array.isArray(result.data)) {
+        if (result.success && Array.isArray(result.data) && result.data.length > 0) {  // 添加数据长度检查
           // 获取所有设备ID
           const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
           setSensorStats({
-            total: Math.max(1, deviceIds.length),  // 至少显示1个传感器
+            total: Math.max(0, deviceIds.length),
             online: deviceIds.length
           });
+          setMonitoringStatus('正常');
         } else {
-          console.warn('API返回数据格式不正确:', result);
-          setSensorStats({ total: 1, online: 0 });
+          console.warn('API返回数据格式不正确或无数据:', result);
+          setSensorStats({ total: 0, online: 0 });
+          setMonitoringStatus('异常');
         }
       } catch (error) {
         console.error('获取传感器状态失败:', error);
-        setSensorStats({ total: 1, online: 0 });  // 发生错误时显示离线状态
+        setSensorStats({ total: 0, online: 0 });
+        setMonitoringStatus('异常');
       }
     };
 
     // 立即执行一次
     fetchSensorStats();
     
-    // 设置定时器定期更新，增加更新频率
+    // 设置定时器定期更新
     const statsInterval = setInterval(fetchSensorStats, 10000); // 每10秒更新一次
 
     return () => clearInterval(statsInterval);
@@ -91,7 +95,9 @@ export default function Demo1(): ReactElement {
           <span className="date-display">{currentDate}</span>
         </div>
         <div className="header-info header-info-r">
-          <span className="weather-info">监测状态：正常</span>
+          <span className="weather-info" style={{
+            color: monitoringStatus === '异常' ? '#ff6b6b' : '#4ecdc4'
+          }}>监测状态：{monitoringStatus}</span>
           <span className="location-info">传感器在线：{sensorStats.online}/{sensorStats.total}</span>
         </div>
       </header>
