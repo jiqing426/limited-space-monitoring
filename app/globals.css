@@ -197,7 +197,7 @@ body {
   
   .header-title {
     line-height: 42px;
-    font-size: 24px;
+    font-size: 28px;
   }
   
   .header-info {
@@ -405,8 +405,7 @@ body {
 }
 
 .stat-value {
-  font-size: 36px;
-  font-weight: bold;
+  font-size: 30px;
   color: #4ecdc4;
 }
 
@@ -966,9 +965,6 @@ body {
   font-size: 10px;
 }
 
-.point-data {
-  margin-bottom: 8px;
-}
 
 .data-item {
   display: flex;

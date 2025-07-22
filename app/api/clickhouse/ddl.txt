@@ -1,17 +1,19 @@
 create table lsm_summary_data
 (
-    id           UUID     default generateUUIDv4() comment '主键ID',
-    device_id    UInt32 comment '设备编号',
-    relay_status Nullable(String) comment '继电器状态',
-    tem          Nullable(Float32) comment '温度值',
-    hum          Nullable(Float32) comment '湿度值',
-    oxygen       Nullable(Float32) comment '氧气值',
-    hyd          Nullable(Float32) comment '硫化氢值',
-    dioxide      Nullable(Float32) comment '二氧化碳指',
-    monoxide     Nullable(Float32) comment '一氧化碳值',
-    methane      Nullable(Float32) comment '甲烷值',
-    record_time  Nullable(String) comment '记录时间',
-    remark       Nullable(String) comment '备注',
-    create_time  DateTime default addHours(now(), 8) comment '创建时间',
-    update_time  DateTime default addHours(now(), 8) comment '修改时间'
+    id          UUID     default generateUUIDv4() comment '主键ID',
+    device_id   UInt32 comment '设备编号',
+    tem         Nullable(Float32) comment '温度值',
+    hum         Nullable(Float32) comment '湿度值',
+    oxygen      Nullable(Float32) comment '氧气值',
+    hyd         Nullable(Float32) comment '硫化氢值',
+    dioxide     Nullable(Float32) comment '二氧化碳值',
+    monoxide    Nullable(Float32) comment '一氧化碳值',
+    methane     Nullable(Float32) comment '甲烷值',
+    record_time Nullable(String) comment '记录时间',
+    remark      Nullable(String) comment '备注',
+    create_time DateTime default addHours(now(), 8) comment '创建时间',
+    update_time DateTime default addHours(now(), 8) comment '修改时间'
 )
+    engine = MergeTree ORDER BY (id, create_time)
+        SETTINGS index_granularity = 8192
+        comment '数据汇总表';

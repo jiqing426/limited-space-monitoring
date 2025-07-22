@@ -6,10 +6,11 @@ import { AlertTriangle, CheckCircle, Thermometer, Droplets, Wind, Flame, Skull, 
 // 空气质量统计组件
 export function AirQualityStats() {
   const [stats, setStats] = useState({
-    totalSensors: 0,
+    totalSensors: 0,  // 改为0，等待API返回实际数量
     onlineSensors: 0,
     alertCount: 0,
-    safetyLevel: '未知'
+    safetyLevel: '未知',
+    alerts: [] as string[]
   });
 
   // 获取监测点数据
@@ -18,44 +19,115 @@ export function AirQualityStats() {
       const response = await fetch('/api/clickhouse/monitoring-points');
       const result = await response.json();
       
-      if (result.success && result.data) {
-        // 统计设备数量
+      if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+        // 获取所有设备ID
         const deviceIds = [...new Set(result.data.map((item: any) => item.device_id))];
         const totalDevices = deviceIds.length;
-        
-        // 统计在线设备数（有任意数据的设备视为在线）
-        const onlineDevices = deviceIds.filter(deviceId => {
-          const deviceData = result.data.find((item: any) => item.device_id === deviceId);
-          return deviceData && (
-            deviceData.temperature || 
-            deviceData.humidity || 
-            deviceData.oxygen || 
-            deviceData.h2s || 
-            deviceData.co2 || 
-            deviceData.co || 
-            deviceData.methane
-          );
-        }).length;
-        
-        // 统计告警数量（任意气体超标）
-        const alerts = result.data.filter((item: any) => (
-          (item.methane > 2.5) || 
-          (item.h2s > 0.05) || 
-          (item.oxygen < 20.0) || 
-          (item.co2 > 1000) || 
-          (item.co > 50)
-        )).length;
-        
+
+        // 获取每个设备的最新数据
+        const apiDataMap: { [key: string]: any } = {};
+        result.data.forEach((item: any) => {
+          const deviceKey = `D${item.device_id}`;
+          if (!apiDataMap[deviceKey] || 
+              new Date(item.create_time) > new Date(apiDataMap[deviceKey].create_time)) {
+            apiDataMap[deviceKey] = item;
+          }
+        });
+
+        // 在数据处理部分添加日志
+        Object.entries(apiDataMap).forEach(([deviceKey, data]: [string, any]) => {
+          console.log(`设备${data.device_id}气体数据:`, {
+            甲烷: data.methane,
+            硫化氢: data.h2s,
+            氧气: data.oxygen,
+            二氧化碳: data.co2,
+            一氧化碳: data.co,
+          });
+        });
+
+        // 检查预警情况
+        const alerts: string[] = [];
+        let alertPointCount = 0;  // 添加预警点位计数
+
+        Object.values(apiDataMap).forEach((data: any) => {
+          let hasAlert = false;  // 用于标记该监测点是否有预警
+          let status: 'normal' | 'warning' | 'danger' | 'offline' = 'normal';
+
+          // 危险级别判断
+          if (
+            data.oxygen <= 19.5 ||      // 氧气低于 19.5%
+            data.oxygen >= 23.5 ||      // 氧气高于 23.5%
+            data.methane >= 1.25 ||     // 甲烷超过 1.25% LEL
+            data.h2s >= 10 ||           // 硫化氢超过 10ppm
+            data.co >= 100 ||           // 一氧化碳超过 100ppm
+            data.co2 >= 5000 || data.oxygen <= 19.5     // 二氧化碳超过 5000ppm
+          ) {
+            status = 'danger';
+            hasAlert = true;
+            // 添加预警信息
+            if (data.oxygen === 0) alerts.push(`设备${data.device_id}: 氧气浓度为0，极度危险！`);
+            else if (data.oxygen <= 19.5) alerts.push(`设备${data.device_id}: 氧气浓度严重不足`);
+            else if (data.oxygen >= 23.5) alerts.push(`设备${data.device_id}: 氧气浓度严重超标`);
+            
+            if (data.methane >= 1.25) alerts.push(`设备${data.device_id}: 甲烷浓度严重超标`);
+            if (data.h2s >= 10) alerts.push(`设备${data.device_id}: 硫化氢浓度严重超标`);
+            if (data.co >= 100) alerts.push(`设备${data.device_id}: 一氧化碳浓度严重超标`);
+            if (data.co2 >= 5000) alerts.push(`设备${data.device_id}: 二氧化碳浓度严重超标`);
+          }
+          // 警告级别判断
+          else if (
+            data.methane >= 0.5 ||      // 甲烷超过 0.5% LEL
+            data.h2s >= 5 ||            // 硫化氢超过 5ppm
+            data.oxygen <= 20.0 ||      // 氧气低于 20.0%
+            data.oxygen >= 23.0 ||      // 氧气高于 23.0%
+            data.co >= 35 ||            // 一氧化碳超过 35ppm
+            data.co2 >= 1000            // 二氧化碳超过 1000ppm
+          ) {
+            status = 'warning';
+            hasAlert = true;
+            // 添加预警信息
+            if (data.methane >= 0.5) alerts.push(`设备${data.device_id}: 甲烷浓度超标`);
+            if (data.h2s >= 5) alerts.push(`设备${data.device_id}: 硫化氢浓度超标`);
+            if (data.oxygen <= 20.0) alerts.push(`设备${data.device_id}: 氧气浓度过低`);
+            if (data.oxygen >= 23.0) alerts.push(`设备${data.device_id}: 氧气浓度过高`);
+            if (data.co >= 35) alerts.push(`设备${data.device_id}: 一氧化碳浓度超标`);
+            if (data.co2 >= 1000) alerts.push(`设备${data.device_id}: 二氧化碳浓度超标`);
+          }
+
+          // 如果该监测点有预警，增加预警点位计数
+          if (hasAlert) {
+            alertPointCount++;
+          }
+        });
+
         // 更新状态
         setStats({
           totalSensors: totalDevices,
-          onlineSensors: onlineDevices,
-          alertCount: alerts,
-          safetyLevel: alerts > 0 ? '异常' : '良好'
+          onlineSensors: totalDevices,
+          alertCount: alertPointCount,  // 使用预警点位数量
+          safetyLevel: alerts.some(alert => alert.includes('严重')) ? '危险' : alerts.length > 0 ? '异常' : '良好',
+          alerts: alerts
+        });
+      } else {
+        // 如果没有数据，重置状态
+        setStats({
+          totalSensors: 0,
+          onlineSensors: 0,
+          alertCount: 0,
+          safetyLevel: '未知',
+          alerts: []
         });
       }
     } catch (error) {
       console.error('获取监测点数据失败:', error);
+      // 发生错误时，重置状态
+      setStats({
+        totalSensors: 0,
+        onlineSensors: 0,
+        alertCount: 0,
+        safetyLevel: '未知',
+        alerts: []
+      });
     }
   };
 
@@ -80,7 +152,11 @@ export function AirQualityStats() {
           <div className="stat-info">
             <div className="stat-label">当前安全等级</div>
             <div className="stat-label-en">SAFETY LEVEL</div>
-            <div className="stat-value">{stats.safetyLevel}</div>
+            <div className="stat-value" style={{ 
+              color: stats.safetyLevel === '危险' ? '#ef4444' : '#10b981',  // 危险时显示红色，否则保持绿色
+            }}>
+              {stats.safetyLevel}
+            </div>
           </div>
         </div>
         
