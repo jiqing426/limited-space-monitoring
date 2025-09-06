@@ -24,34 +24,6 @@ export default function RootLayout({
           display: 'flex',
           gap: '10px'
         }}>
-          <Link 
-            href="/demo1" 
-            style={{
-              padding: '8px 16px',
-              background: 'rgba(0,0,0,0.7)',
-              color: '#4ecdc4',
-              textDecoration: 'none',
-              borderRadius: '4px',
-              fontSize: '12px',
-              border: '1px solid rgba(78, 205, 196, 0.3)'
-            }}
-          >
-            Demo1监测
-          </Link>
-          <Link 
-            href="/demo2" 
-            style={{
-              padding: '8px 16px',
-              background: 'rgba(0,0,0,0.7)',
-              color: '#4ecdc4',
-              textDecoration: 'none',
-              borderRadius: '4px',
-              fontSize: '12px',
-              border: '1px solid rgba(78, 205, 196, 0.3)'
-            }}
-          >
-            Demo2监测
-          </Link>
         </nav>
         {children}
       </body>
