@@ -913,7 +913,7 @@ body {
   gap: 12px;
   margin-top: 15px;
   max-height: 400px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 .monitoring-point {
