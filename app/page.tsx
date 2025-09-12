@@ -6,6 +6,7 @@ import ThreeJSViewer from './components/ThreeJSViewer';
 import { AirQualityStats, EnvironmentMonitor } from './components/AirQualityComponents';
 import { HistoryChart, PredictionChart } from './components/AirQualityCharts';
 import { MonitoringMatrix } from './components/MonitoringMatrix';
+import { BarChart3, AlertTriangle } from 'lucide-react';
 
 export default function Demo1(): ReactElement {
   const [currentTime, setCurrentTime] = useState('');
@@ -89,7 +90,7 @@ export default function Demo1(): ReactElement {
     <div className="dashboard-container air-quality-dashboard">
       {/* 头部 */}
       <header className="dashboard-header">
-        <h2 className="header-title" style={{ fontWeight: '800' }}>地下管廊有害气体监测系统</h2>
+        <h1 className="header-title" style={{ fontWeight: '700', fontSize: '36px', fontFamily: 'Microsoft YaHei' }}>地下管廊有限空间气体智能监测系统</h1>
         <div className="header-info header-info-l">
           <span className="time-display">{currentTime}</span>
           <span className="date-display">{currentDate}</span>
@@ -182,7 +183,7 @@ export default function Demo1(): ReactElement {
               height: '40%',
               padding: '6px'
             }}>
-              <h3 className="chart-title">24小时历史数据</h3>
+              <h3 className="chart-title"><BarChart3 size={20} style={{marginRight: '8px', verticalAlign: 'middle'}} />24小时历史数据</h3>
               <div className="chart-div" style={{ flex: 1 }}>
                 <HistoryChart showPeakValues={false} />
               </div>
@@ -204,7 +205,7 @@ export default function Demo1(): ReactElement {
               height: '38%',
               padding: '6px'  // 保持一致的内边距
             }}>
-              <h3 className="chart-title">气体浓度预测</h3>
+              <h3 className="chart-title"><AlertTriangle size={20} style={{marginRight: '8px', verticalAlign: 'middle'}} />浓度预警</h3>
               <div className="chart-div" style={{ flex: 1 }}>
                 <PredictionChart />
               </div>
