@@ -216,7 +216,7 @@ export function MonitoringMatrix() {
 
   return (
     <div className="air-quality-stats-container">
-      <h3 className="chart-title">监测点矩阵</h3>
+      <h3 className="chart-title"><MapPin size={20} style={{marginRight: '8px', verticalAlign: 'middle'}} />监测矩阵</h3>
       <div className="monitoring-matrix-container" style={{
         height: 'calc(100% - 40px)',
         overflowY: 'auto',
@@ -379,10 +379,10 @@ export function MonitoringMatrix() {
                     padding: '0'  // 移除内边距
                   }}>
                     <span className="data-label" style={{
-                      fontSize: '10px',  // 减小字体
+                      fontSize: '14px',
                       color: '#94a3b8',
                       lineHeight: '18px',
-                      paddingLeft: '0'  // 移除左内边距
+                      paddingLeft: '0'
                     }}>温度</span>
                     <span className="data-value" style={{ 
                       color: '#4ecdc4',
@@ -407,7 +407,7 @@ export function MonitoringMatrix() {
                     padding: '0'
                   }}>
                     <span className="data-label" style={{
-                      fontSize: '10px',
+                      fontSize: '14px',
                       color: '#94a3b8',
                       lineHeight: '18px',
                       paddingLeft: '0'
@@ -615,4 +615,4 @@ export function MonitoringMatrix() {
       </div>
     </div>
   );
-} 
+}

@@ -132,8 +132,10 @@ body {
 .chart-title {
   height: 32px;
   font-size: 22px;
-  font-weight: normal;
-  color: #9aa8d4;
+  font-weight: bold;
+  color: #ffd700;
+  display: flex;
+  align-items: center;
 }
 
 .chart-div {
@@ -220,6 +222,10 @@ body {
   .chart-title {
     height: 24px;
     font-size: 18px;
+    font-weight: bold;
+    color: #ffd700;
+    display: flex;
+    align-items: center;
   }
   
   .chart-div {
@@ -272,6 +278,7 @@ body {
   border: 1px solid rgba(64, 158, 255, 0.3);
   border-radius: 8px;
   padding: 15px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -303,6 +310,7 @@ body {
   align-items: center;
   gap: 20px;
   background: rgba(0, 0, 0, 0.5);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -725,6 +733,7 @@ body {
   border: 1px solid rgba(78, 205, 196, 0.3);
   border-radius: 8px;
   padding: 15px;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   flex: 1;
   display: flex;
@@ -743,7 +752,7 @@ body {
 }
 
 .air-quality-3d-container {
-  height: 60%;
+  height: 58%;
   background: rgba(20, 30, 50, 0.9);
   border: 1px solid rgba(78, 205, 196, 0.3);
   border-radius: 8px;
@@ -770,6 +779,7 @@ body {
   align-items: center;
   gap: 30px;
   background: rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 
@@ -895,7 +905,7 @@ body {
 }
 
 .env-label {
-  font-size: 11px;
+  font-size: 14px;
   color: #b0c2f9;
   margin-bottom: 3px;
 }
@@ -913,7 +923,7 @@ body {
   gap: 12px;
   margin-top: 15px;
   max-height: 400px;
-  overflow-y: auto;
+  /* overflow-y: auto; */
 }
 
 .monitoring-point {
@@ -1042,6 +1052,7 @@ body {
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
 }
 

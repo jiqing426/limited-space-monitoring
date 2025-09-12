@@ -143,7 +143,7 @@ export function AirQualityStats() {
 
   return (
     <div className="air-quality-stats-container">
-      <h3 className="chart-title">空气质量统计</h3>
+      <h3 className="chart-title"><Wind size={20} style={{marginRight: '8px', verticalAlign: 'middle'}} />空气质量</h3>
       <div className="stats-content">
         <div className="stat-item main-stat">
           <div className="stat-icon">
@@ -212,7 +212,7 @@ export function EnvironmentMonitor() {
 
   return (
     <div className="air-quality-stats-container">
-      <h3 className="chart-title">环境监测</h3>
+      <h3 className="chart-title"><Thermometer size={20} style={{marginRight: '8px', verticalAlign: 'middle'}} />环境监测</h3>
       <div className="env-monitor-grid">
         <div className="env-item">
           <div className="env-icon">
@@ -256,4 +256,4 @@ export function EnvironmentMonitor() {
       </div>
     </div>
   );
-} 
+}

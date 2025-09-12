@@ -78,14 +78,14 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
                 gap: '4px'
               }}>
                 <span style={{ 
-                  fontSize: '10px',
+                  fontSize: '14px',
                   color: '#94a3b8'
                 }}>{key === 'h2s' ? '硫化氢' : 
                     key === 'co2' ? '二氧化碳' :
                     key === 'co' ? '一氧化碳' :
                     key === 'oxygen' ? '氧气' : '甲烷'}</span>
                 <span style={{ 
-                  fontSize: '10px',
+                  fontSize: '14px',
                   color: '#fbbf24',
                   fontWeight: '600'
                 }}>
@@ -201,7 +201,7 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
           left: 'center',
           textStyle: {
             color: '#b0c2f9',
-            fontSize: 11
+            fontSize: 14
           },
           itemWidth: 12,
           itemHeight: 8,
@@ -295,18 +295,18 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
             symbol: 'circle',
             symbolSize: 4,
             lineStyle: {
-              width: 2,
-              color: '#feca57'
+              width: 3,
+              color: '#e74c3c'
             },
             itemStyle: { 
-              color: '#feca57',
+              color: '#e74c3c',
               borderColor: '#fff',
               borderWidth: 1
             },
             areaStyle: {
               color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
-                { offset: 0, color: 'rgba(254, 202, 87, 0.2)' },
-                { offset: 1, color: 'rgba(254, 202, 87, 0.05)' }
+                { offset: 0, color: 'rgba(231, 76, 60, 0.3)' },
+                { offset: 1, color: 'rgba(231, 76, 60, 0.05)' }
               ])
             }
           },
@@ -318,10 +318,10 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
             symbol: 'circle',
             symbolSize: 4,
             lineStyle: {
-              width: 2,
-              color: '#ff9ff3'
+              width: 3,
+              color: '#f39c12'
             },
-            itemStyle: { color: '#ff9ff3' }
+            itemStyle: { color: '#f39c12' }
           },
           {
             name: '氧气',
@@ -332,10 +332,10 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
             symbol: 'circle',
             symbolSize: 4,
             lineStyle: {
-              width: 2,
-              color: '#45b7d1'
+              width: 3,
+              color: '#27ae60'
             },
-            itemStyle: { color: '#45b7d1' }
+            itemStyle: { color: '#27ae60' }
           },
           {
             name: '一氧化碳',
@@ -345,10 +345,10 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
             symbol: 'circle',
             symbolSize: 4,
             lineStyle: {
-              width: 2,
-              color: '#fd79a8'
+              width: 3,
+              color: '#2980b9'
             },
-            itemStyle: { color: '#fd79a8' }
+            itemStyle: { color: '#2980b9' }
           },
           {
             name: '二氧化碳',
@@ -358,10 +358,10 @@ export function HistoryChart({ showPeakValues = true, peakValuesOnly = false }: 
             symbol: 'circle',
             symbolSize: 4,
             lineStyle: {
-              width: 2,
-              color: '#a29bfe'
+              width: 3,
+              color: '#8e44ad'
             },
-            itemStyle: { color: '#a29bfe' }
+            itemStyle: { color: '#8e44ad' }
           }
         ]
       };
