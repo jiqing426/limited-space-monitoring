@@ -339,7 +339,7 @@ export function MonitoringMatrix() {
                     marginBottom: '1px'
                   }}>{point.name}</div>
                   <div className="point-location" style={{
-                    fontSize: '12px',
+                    fontSize: '9px',
                     color: '#999',
                     opacity: 0.8
                   }}>{point.location}</div>
